@@ -32,7 +32,8 @@ class GetObligations(MethodResource, Resource):
                     'obligationDescription': obl_data[0]['obligationDescription'],
                     'exectionDate': obl_data[0]['executionDate'],
                     'endDate': obl_data[0]['endDate'],
-                    'termId': obl_data[0]['termId'],
+                    'fulfillmentDate': obl_data[0]['fulfillmentDate'],
+                    'contractorId': obl_data[0]['contractorId'],
                 }
                 obligation_sub_array.append(new_data)
             if len(obligation_sub_array) != 0:
@@ -63,6 +64,7 @@ class GetObligationByTermId(MethodResource, Resource):
                             'obligationDescription': d['obligationDescription']['value'],
                             'exectionDate': d['executionDate']['value'],
                             'endDate': d['endDate']['value'],
+                            'fulfillmentDate': d['fulfillmentDate']['value'],
                             'contractIdB2C': d['contractIdB2C']['value'][45:],
                             'termId': termID,
                             }
@@ -101,8 +103,8 @@ class ObligationById(MethodResource, Resource):
                             'obligationDescription': description,  # d['obligationDescription']['value'],
                             'executionDate': d['executionDate']['value'],
                             'endDate': d['endDate']['value'],
-                            'termId': d['termId']['value'][45:],
-                            'contractorId': d['contractorId']['value'][45:],
+                            'fulfillmentDate': d['fulfillmentDate']['value'],
+                            'contractorId': d['contractorId']['value'],
                             'contractIdB2C': d['contractIdB2C']['value'][45:],
                             }
                 obligation_array.append(new_data)
@@ -292,7 +294,7 @@ class ObligationStatusUpdateById(MethodResource, Resource):
              ?Obligation rdf:type :Obligation;
              :obligationID ?obligationId .
               FILTER(?obligationId = "{1}")
-             }}""").format('\'{}^^xsd:dateTime\''.format(violation_date), obligationID, state)
+             }}""").format('\'{}\'^^xsd:dateTime'.format(violation_date), obligationID, state)
 
         sparql.setQuery(query)
         sparql.method = "POST"

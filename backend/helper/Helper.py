@@ -24,6 +24,7 @@ class HelperContract:
             "get_contract_by_contractor": self.get_contract_by_contractor,
             "get_contract_by_provider": self.get_contract_by_provider,
             "get_contract_by_id": self.get_contract_by_id,
+            "get_contract_by_term_id": self.get_contract_by_term_id,
             "get_signature_by_id": self.get_signature_by_id,
             "get_contractor_by_id": self.get_contractor_by_id,
             "get_company_by_id": self.get_company_by_id,
@@ -34,6 +35,7 @@ class HelperContract:
             "get_contract_signatures": self.get_contract_signatures,
             "get_term_type_by_id": self.get_term_type_by_id,
             "get_term_by_id": self.get_term_by_id,
+            "get_term_by_obligation_id": self.get_term_by_obligation_id,
             "get_obligation_by_id": self.get_obligation_by_id,
             "get_all_obligations": self.get_all_obligations,
             "get_term_obligations": self.get_term_obligations,
@@ -91,6 +93,9 @@ class HelperContract:
         if additionalData == "contractID" and contractID is not None:
             return dict({"map": "get_contract_by_id", "arg": contractID})
 
+        if additionalData == "contractBytermID" and termID is not None:
+            return dict({"map": "get_contract_by_term_id", "arg": termID})
+
         if additionalData == "contractID" and contractID is not None:
             return dict({"map": "get_contract_signature_by_id", "arg": contractID})
 
@@ -123,6 +128,9 @@ class HelperContract:
 
         if additionalData == "termID" and termID is not None:
             return dict({"map": "get_term_by_id", "arg": termID})
+
+        if additionalData == "termByObligationId" and obligationID is not None:
+            return dict({"map": "get_term_by_obligation_id", "arg": obligationID})
 
         if additionalData == "termObligation" and termID is not None:
             return dict({"map": "get_term_obligations", "arg": termID})

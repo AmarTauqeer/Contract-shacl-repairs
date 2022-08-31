@@ -32,8 +32,8 @@ class ContractValidation(QueryEngine):
         ContractStatus = validated_data["ContractStatus"]
         ContractCategory = validated_data["ContractCategory"]
         ConsentId = validated_data["ConsentId"]
-        if ContractCategory!='categoryBusinessToConsumer':
-            ConsentId=''
+        if ContractCategory != 'categoryBusinessToConsumer':
+            ConsentId = ''
         ConsiderationDescription = validated_data["ConsiderationDescription"]
         ConsiderationValue = validated_data["ConsiderationValue"]
         Contractors = validated_data["Contractors"]
@@ -41,20 +41,23 @@ class ContractValidation(QueryEngine):
         Signatures = validated_data["Signatures"]
 
         # remove empty strings
-        if ContractType=='string':
-            ContractType=''
+        if ConsentId == 'string':
+            ConsentId = ''
 
-        if Purpose=='string':
-            Purpose=''
+        if ContractType == 'string':
+            ContractType = ''
 
-        if Medium=='string':
-            Medium=''
+        if Purpose == 'string':
+            Purpose = ''
 
-        if ConsiderationDescription=='string':
-            ConsiderationDescription=''
+        if Medium == 'string':
+            Medium = ''
 
-        if ConsiderationValue=='string':
-            ConsiderationValue=''
+        if ConsiderationDescription == 'string':
+            ConsiderationDescription = ''
+
+        if ConsiderationValue == 'string':
+            ConsiderationValue = ''
 
         if type == "insert":
             ContractId = contract_id

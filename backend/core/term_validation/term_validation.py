@@ -26,7 +26,6 @@ class TermValidation(QueryEngine):
 
     def post_data(self, validated_data, type, term_id):
         TermTypeId = validated_data["TermTypeId"]
-        ContractId = validated_data["ContractId"]
         Obligations = validated_data["Obligations"]
         Description = validated_data["Description"]
         CreateDate = validated_data["CreateDate"]
@@ -40,7 +39,6 @@ class TermValidation(QueryEngine):
             respone = self.post_sparql(self.get_username(), self.get_password(),
                                        self.insert_query_term(TermId=TermId,
                                                               TermTypeId=TermTypeId,
-                                                              ContractId=ContractId,
                                                               Obligations=self.list_to_query(Obligations,
                                                                                              "hasObligations"),
                                                               Description=Description,
@@ -59,7 +57,6 @@ class TermValidation(QueryEngine):
                 respone = self.post_sparql(self.get_username(), self.get_password(),
                                            self.insert_query_term(TermId=TermId,
                                                                   TermTypeId=TermTypeId,
-                                                                  ContractId=ContractId,
                                                                   Obligations=self.list_to_query(Obligations,
                                                                                                  "hasObligations"),
                                                                   Description=Description,

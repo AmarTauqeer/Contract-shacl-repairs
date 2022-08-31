@@ -97,6 +97,29 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
 
         return query
 
+    def get_contract_by_term_id(self, id):
+        query = textwrap.dedent("""{0}
+           SELECT *   
+                WHERE {{ 
+                ?Contract rdf:type fibo-fnd-agr-ctr:Contract;
+                :contractID ?contractId;
+                :hasTerms ?term;
+                :hasContractStatus ?contractStatus;
+                :hasContractCategory ?contractCategory;
+                :consentID ?consentId;
+                :forPurpose ?purpose;
+                :contractType ?contractType;
+                fibo-fnd-agr-ctr:hasEffectiveDate ?effectiveDate;
+                fibo-fnd-agr-ctr:hasExecutionDate ?executionDate;
+                :hasEndDate ?endDate;
+                :inMedium ?medium;
+                dct:description ?consideration;
+                rdf:value ?value .
+                
+                filter(?term=:{1}) .
+            }}""").format(self.prefix(), id)
+
+        return query
     def get_contractor_by_id(self, id):
         query = textwrap.dedent("""{0}
             SELECT   ?contractorId ?name ?phone ?email ?country ?territory ?address ?vat ?companyId ?createDate ?role
@@ -211,15 +234,28 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
 
     def get_term_by_id(self, id):
         query = textwrap.dedent("""{0}
-            SELECT ?termId ?termTypeId ?contractId ?description ?createDate   
+            SELECT ?termId ?termTypeId ?description ?createDate   
                 WHERE {{ 
                 ?Term rdf:type :TermsAndConditions;
                 :termID ?termId;
                  :hasTermTypes ?termTypeId;
-                 :contractID ?contractId;
                 dct:description ?description;
                 :hasCreationDate ?createDate .
                 filter(?termId="{1}") .
+            }}""").format(self.prefix(), id)
+
+        return query
+
+    def get_term_by_obligation_id(self, id):
+        query = textwrap.dedent("""{0}
+                SELECT *
+                WHERE {{
+                ?Term rdf:type :TermsAndConditions;
+                :termID ?termId;
+                :hasObligations ?obligationId;
+                 dct:description ?description;
+                :hasCreationDate ?createDate .
+                filter(?obligationId=:{1}) .
             }}""").format(self.prefix(), id)
 
         return query
@@ -266,12 +302,11 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
 
     def get_all_terms(self):
         query = textwrap.dedent("""{0}
-            SELECT ?termId ?termTypeId ?contractId ?description ?createDate   
+            SELECT ?termId ?termTypeId ?description ?createDate   
                 WHERE {{ 
                 ?Term rdf:type :TermsAndConditions;
                 :termID ?termId;
                  :hasTermTypes ?termTypeId;
-                 :contractID ?contractId;
                 dct:description ?description;
                 :hasCreationDate ?createDate .
         }}
@@ -280,12 +315,13 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
 
     def get_all_signatures(self):
         query = textwrap.dedent("""{0}
-            select ?signatureId ?signatureText ?createDate
+            select ?signatureId ?signatureText ?createDate ?contractorId
             where{{   
                 ?Signature rdf:type :Signature;
                 :signatureID ?signatureId;
                  :hasSignature ?signatureText;
-                :hasCreationDate ?createDate .
+                :hasCreationDate ?createDate;
+                :contractorID ?contractorId .
         }}
         """).format(self.prefix())
         return query
@@ -340,6 +376,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                 ?obl dct:description ?obligationDescription .
                 ?obl fibo-fnd-agr-ctr:hasExecutionDate ?executionDate .
                 ?obl :hasEndDate ?endDate .
+                ?obl :fulfillmentDate ?fulfillmentDate .
                 ?obl dct:identifier ?contractIdB2C .
                 ?obl :obligationID ?obligationId .
                 filter(?termId="{1}") .
@@ -403,11 +440,11 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
              ?Obligation rdf:type :Obligation;
                 :obligationID ?obligationId;
                 :contractorID ?contractorId;
-                :termID ?termId;
                 dct:identifier ?contractIdB2C;
                 dct:description ?obligationDescription;
                 fibo-fnd-agr-ctr:hasExecutionDate ?executionDate;
                 :hasEndDate ?endDate;
+                :fulfillmentDate ?fulfillmentDate;
                 :hasStates ?state .
         }}
         """).format(self.prefix())
@@ -420,11 +457,11 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
             ?Obligation rdf:type :Obligation;
             :obligationID ?obligationId;
             :contractorID ?contractorId;
-            :termID ?termId;
            :hasStates ?state;
     		dct:description ?obligationDescription;
     		fibo-fnd-agr-ctr:hasExecutionDate ?executionDate;
-    		:hasEndDate ?endDate .
+    		:hasEndDate ?endDate;
+    		:fulfillmentDate ?fulfillmentDate .
       		
         }}
         """).format(self.prefix())
@@ -450,10 +487,10 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                     :obligationID ?obligationId;
                     :contractorID ?contractorId;
                     dct:identifier ?contractIdB2C;
-                    :termID ?termId;
                     dct:description ?obligationDescription;
                     fibo-fnd-agr-ctr:hasExecutionDate ?executionDate;
                     :hasEndDate ?endDate;
+                    :fulfillmentDate ?fulfillmentDate;
                     :hasStates ?state .
                 filter(?obligationId="{1}") .
             }}""").format(self.prefix(), id)
@@ -482,7 +519,6 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                        :hasCreationDate ?createDate;
                        :hasSignature ?signatureText;
                        :signatureID ?signatureId;
-                       :contractID ?contractId;
                        :contractorID ?contractorId .
             filter(?signatureId="{1}") .
         }}""").format(self.prefix(), id)
@@ -503,7 +539,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
              WHERE {{
                     ?Contract rdf:type fibo-fnd-agr-ctr:Contract;
                         :contractID ?contractId;
-              FILTER(?contractId = "{2}")}}""").format(self.prefix(), '\'{}^^xsd:dateTime\''.format(violation_date), id)
+              FILTER(?contractId = "{2}")}}""").format(self.prefix(), '\'{}\'^^xsd:dateTime'.format(violation_date), id)
 
         # print(query)
         return query
@@ -513,7 +549,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                      ConsiderationDescription, ConsiderationValue, Contractors, Terms, Signatures):
         insquery = textwrap.dedent("""{0} 
             INSERT DATA {{
-            :{1} a <http://ontologies.atb-bremen.de/smashHitCore#contractID>;
+            :{1} rdf:type fibo-fnd-agr-ctr:Contract;
                        :contractType :{2};
                        :forPurpose "{3}";
                         fibo-fnd-agr-ctr:hasEffectiveDate {4};
@@ -528,7 +564,6 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                          {13};
                          {14};
                          {15} ;
-                         rdf:type fibo-fnd-agr-ctr:Contract;
                          :contractID "{1}" .
                    }}       
                
@@ -543,7 +578,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
         create_date = datetime.now()
         insquery = textwrap.dedent("""{0} 
         INSERT DATA {{
-            :{1} a <http://ontologies.atb-bremen.de/smashHitCore#contractorID>;
+            :{1} rdf:type prov:Agent;
                         :hasName "{2}";
                         :hasEmail "{3}";
                         :hasTelephone "{4}";
@@ -552,9 +587,8 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                         :hasCountry "{7}";
                         :hasRole :{8} ;
                         :hasVATIN "{9}" ;
-                        :hasCompany :{10};
+                        :hasCompany "{10}";
                         :hasCreationDate {11};
-                        rdf:type prov:Agent;
                         :contractorID "{1}" .
                    }}       
           """.format(self.prefix(), ContractorId, Name, Email, Phone, Address, Territory, Country, Role, Vat,
@@ -566,7 +600,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
         # create_date = datetime.now()
         insquery = textwrap.dedent("""{0} 
         INSERT DATA {{
-            :{1} a <http://ontologies.atb-bremen.de/smashHitCore#companyID>;
+            :{1} rdf:type prov:Organization;
                         :hasName "{2}";
                         :hasEmail "{3}";
                         :hasTelephone "{4}";
@@ -575,7 +609,6 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                         :hasCountry "{7}";
                         :hasVATIN "{8}";
                         :hasCreationDate {9};
-                        rdf:type prov:Organization;
                         :companyID "{1}" .
                         
                    }}       
@@ -583,19 +616,17 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                      '\'{}\'^^xsd:dateTime'.format(CreateDate)))
         return insquery
 
-    def insert_query_term(self, TermId, TermTypeId, ContractId,Obligations, Description, CreateDate):
+    def insert_query_term(self, TermId, TermTypeId, Obligations, Description, CreateDate):
         insquery = textwrap.dedent("""{0} 
         INSERT DATA {{
-            :{1} a <http://ontologies.atb-bremen.de/smashHitCore#termID>;
-                        :hasTermTypes :{2};
-                         :contractID :{3};
-                         {4};
-                        dct:description "{5}";
-                        :hasCreationDate {6};
-                        rdf:type :TermsAndConditions;
+            :{1} rdf:type :TermsAndConditions;
+                        :hasTermTypes "{2}";
+                         {3};
+                        dct:description "{4}";
+                        :hasCreationDate {5};
                         :termID "{1}" .
                    }}       
-          """.format(self.prefix(), TermId, TermTypeId, ContractId, Obligations, Description,
+          """.format(self.prefix(), TermId, TermTypeId, Obligations, Description,
                      '\'{}\'^^xsd:dateTime'.format(CreateDate)))
         return insquery
 
@@ -603,50 +634,47 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
         # create_date = datetime.now()
         insquery = textwrap.dedent("""{0} 
         INSERT DATA {{
-            :{1} a <http://ontologies.atb-bremen.de/smashHitCore#termTypeID>;
+            :{1} rdf:type :TermTypes;
                         :hasName "{2}";
                         dct:description "{3}";
                         :hasCreationDate {4};
-                        rdf:type :TermTypes;
                         :termTypeID "{1}" .
                    }}       
           """.format(self.prefix(), TermTypeId, Name, Description, '\'{}\'^^xsd:dateTime'.format(CreateDate)))
         return insquery
 
-    def insert_query_obligation(self, ObligationId, Description, TermId, ContractorId, ContractIdB2C, State,
-                                ExecutionDate, EndDate):
+    def insert_query_obligation(self, ObligationId, Description, ContractorId, ContractIdB2C, State,
+                                ExecutionDate, EndDate, FulfillmentDate):
         # create_date = datetime.now()
         insquery = textwrap.dedent("""{0} 
         INSERT DATA {{
-            :{1} a <http://ontologies.atb-bremen.de/smashHitCore#obligationID>;
+            :{1} rdf:type :Obligation;
                         dct:description "{2}";
-                        :termID :{3};
-                        :contractorID :{4};
-                        dct:identifier :{5};
-                        :hasStates :{6};
-                        fibo-fnd-agr-ctr:hasExecutionDate {7};
-                        :hasEndDate {8};
-                        rdf:type :Obligation;
+                        :contractorID "{3}";
+                        dct:identifier "{4}";
+                        :hasStates :{5};
+                        fibo-fnd-agr-ctr:hasExecutionDate {6};
+                        :hasEndDate {7};
+                        :fulfillmentDate {8};
                         :obligationID "{1}" .
                    }}       
-          """.format(self.prefix(), ObligationId, Description, TermId, ContractorId, ContractIdB2C, State,
-                     '\'{}\'^^xsd:dateTime'.format(ExecutionDate), '\'{}\'^^xsd:dateTime'.format(EndDate)))
+          """.format(self.prefix(), ObligationId, Description, ContractorId, ContractIdB2C, State,
+                     '\'{}\'^^xsd:dateTime'.format(ExecutionDate), '\'{}\'^^xsd:dateTime'.format(EndDate),
+                     '\'{}\'^^xsd:dateTime'.format(FulfillmentDate)))
         # print(insquery)
         return insquery
 
-    def insert_query_contract_signature(self, SignatureId, ContractId, ContractorId, CreateDate, Signature):
+    def insert_query_contract_signature(self, SignatureId, ContractorId, CreateDate, Signature):
         # create_date = datetime.now()
         insquery = textwrap.dedent("""{0} 
         INSERT DATA {{
-            :{1} a <http://ontologies.atb-bremen.de/smashHitCore#signatureID>;
-                        :contractID :{2};
-                        :contractorID :{3};
-                        :hasCreationDate {4};
-                        :hasSignature "{5}";
-                        rdf:type :Signature;
+            :{1} rdf:type :Signature;
+                        :contractorID "{2}";
+                        :hasCreationDate {3};
+                        :hasSignature "{4}";
                         :signatureID "{1}"
                    }}       
-          """.format(self.prefix(), SignatureId, ContractId, ContractorId, '\'{}\'^^xsd:dateTime'.format(CreateDate),
+          """.format(self.prefix(), SignatureId, ContractorId, '\'{}\'^^xsd:dateTime'.format(CreateDate),
                      Signature))
         # print(insquery)
         return insquery

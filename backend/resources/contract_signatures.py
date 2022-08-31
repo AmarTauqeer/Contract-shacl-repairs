@@ -4,7 +4,7 @@ from resources.schemas import *
 
 
 class GetSignatures(MethodResource, Resource):
-    @doc(description='Contract Signatures', tags=['Contract Signatures'])
+    @doc(description='Signatures', tags=['Signatures'])
     # @check_for_session
     # @Credentials.check_for_token
     # @marshal_with(BulkResponseQuerySchema)
@@ -23,12 +23,11 @@ class GetSignatures(MethodResource, Resource):
                 # get contract and contractor
                 sig = SignatureById.get(self, signatureId)
                 sig_data = sig.json
-                contract_id = sig_data['contractId']
                 contractor_id = sig_data['contractorId']
                 create_date = sig_data['createDate']
                 signature_text = sig_data['signatureText']
 
-                new_data = {'signatureId': signatureId, 'contractId': contract_id, 'contractor_id': contractor_id,
+                new_data = {'signatureId': signatureId, 'contractor_id': contractor_id,
                             'createDate': create_date, 'signatureText': signature_text}
                 signature_arry.append(new_data)
             if len(signature_arry) != 0:
@@ -37,7 +36,7 @@ class GetSignatures(MethodResource, Resource):
 
 
 class SignatureById(MethodResource, Resource):
-    @doc(description='Contract Signatures', tags=['Contract Signatures'])
+    @doc(description='Signatures', tags=['Signatures'])
     # @check_for_session
     # @Credentials.check_for_token
     # @marshal_with(BulkResponseQuerySchema)
@@ -57,8 +56,7 @@ class SignatureById(MethodResource, Resource):
             new_data = {'signatureId': signatureID,
                         'createDate': res[0]['createDate']['value'],
                         'signatureText': signature,  # d['signatureText']['value'],
-                        'contractId': res[0]['contractId']['value'][45:],
-                        'contractorId': res[0]['contractorId']['value'][45:],
+                        'contractorId': res[0]['contractorId']['value'],
                         }
 
             if len(new_data) != 0:
@@ -67,7 +65,7 @@ class SignatureById(MethodResource, Resource):
 
 
 class SignatureDeleteById(MethodResource, Resource):
-    @doc(description='Contract Signatures', tags=['Contract Signatures'])
+    @doc(description='Signatures', tags=['Signatures'])
     # @check_for_session
     # @Credentials.check_for_token
     # @marshal_with(BulkResponseQuerySchema)
@@ -92,7 +90,7 @@ class SignatureDeleteById(MethodResource, Resource):
 
 
 class ContractSignatureCreate(MethodResource, Resource):
-    @doc(description='Contract Signatures', tags=['Contract Signatures'])
+    @doc(description='Signatures', tags=['Signatures'])
     # @check_for_session
     # @Credentials.check_for_token
     @use_kwargs(ContractorSignaturesRequestSchema)
@@ -115,7 +113,7 @@ class ContractSignatureCreate(MethodResource, Resource):
 
 
 class ContractSignatureUpdate(MethodResource, Resource):
-    @doc(description='Contract Signatures', tags=['Contract Signatures'])
+    @doc(description='Signatures', tags=['Signatures'])
     # @check_for_session
     # @Credentials.check_for_token
     @marshal_with(BulkResponseQuerySchema)
@@ -142,7 +140,7 @@ class ContractSignatureUpdate(MethodResource, Resource):
 
 
 class GetContractSignatures(MethodResource, Resource):
-    @doc(description='Contract Signatures', tags=['Contract Signatures'])
+    @doc(description='Signatures', tags=['Signatures'])
     # @check_for_session
     # @Credentials.check_for_token
     # @marshal_with(BulkResponseQuerySchema)
@@ -178,7 +176,7 @@ class GetContractSignatures(MethodResource, Resource):
 
 
 class GetSignatureIdentifierById(MethodResource, Resource):
-    @doc(description='Contract Signatures', tags=['Contract Signatures'])
+    @doc(description='Signatures', tags=['Signatures'])
     # @check_for_session
     # @Credentials.check_for_token
     # @marshal_with(BulkResponseQuerySchema)

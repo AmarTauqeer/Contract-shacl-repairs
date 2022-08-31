@@ -22,11 +22,11 @@ class ObligationValidation(QueryEngine):
 
     def post_data(self, validated_data, type, obligation_id):
         Description = validated_data["Description"]
-        TermId = validated_data["TermId"]
         ContractorId = validated_data["ContractorId"]
         State = validated_data["State"]
         ExecutionDate = validated_data["ExecutionDate"]
         EndDate = validated_data["EndDate"]
+        FulfillmentDate = validated_data["FulfillmentDate"]
         ContractIdB2C = validated_data["ContractIdB2C"]
 
         if ContractIdB2C=='string':
@@ -55,12 +55,12 @@ class ObligationValidation(QueryEngine):
             respone = self.post_sparql(self.get_username(), self.get_password(),
                                        self.insert_query_obligation(ObligationId=ObligationId,
                                                                     Description=Description,
-                                                                    TermId=TermId,
                                                                     ContractorId=ContractorId,
                                                                     ContractIdB2C=ContractIdB2C,
                                                                     State=State,
                                                                     ExecutionDate=ExecutionDate,
                                                                     EndDate=EndDate,
+                                                                    FulfillmentDate=FulfillmentDate
                                                                     )
 
                                        )
@@ -87,12 +87,12 @@ class ObligationValidation(QueryEngine):
                 respone = self.post_sparql(self.get_username(), self.get_password(),
                                            self.insert_query_obligation(ObligationId=ObligationId,
                                                                         Description=Description,
-                                                                        TermId=TermId,
                                                                         ContractorId=ContractorId,
                                                                         ContractIdB2C=ContractIdB2C,
                                                                         State=State,
                                                                         ExecutionDate=ExecutionDate,
                                                                         EndDate=EndDate,
+                                                                        FulfillmentDate=FulfillmentDate
                                                                         )
 
                                            )

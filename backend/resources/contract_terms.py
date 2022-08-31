@@ -4,7 +4,7 @@ from resources.schemas import *
 
 
 class GetTerms(MethodResource, Resource):
-    @doc(description='Contract Terms', tags=['Contract Terms'])
+    @doc(description='Terms', tags=['Terms'])
     # @check_for_session
     # @Credentials.check_for_token
     # @marshal_with(BulkResponseQuerySchema)
@@ -29,8 +29,7 @@ class GetTerms(MethodResource, Resource):
 
                 data = {
                     'termId': r['termId']['value'],
-                    'termTypeId': r['termTypeId']['value'][45:],
-                    'contractId': r['contractId']['value'][45:],
+                    'termTypeId': r['termTypeId']['value'],
                     'obligations': obligation_array,
                     'description': r['description']['value'],
                     'createDate': r['createDate']['value']
@@ -41,7 +40,7 @@ class GetTerms(MethodResource, Resource):
 
 
 class TermById(MethodResource, Resource):
-    @doc(description='Contract Terms', tags=['Contract Terms'])
+    @doc(description='Terms', tags=['Terms'])
     # @check_for_session
     # @Credentials.check_for_token
     # @marshal_with(BulkResponseQuerySchema)
@@ -66,8 +65,7 @@ class TermById(MethodResource, Resource):
                     obligation_array.append(oid)
             data = {
                 'termId': res['termId']['value'],
-                'termTypeId': res['termTypeId']['value'][45:],
-                'contractId': res['contractId']['value'][45:],
+                'termTypeId': res['termTypeId']['value'],
                 'obligations': obligation_array,
                 'description': res['description']['value'],
                 'createDate': res['createDate']['value']
@@ -78,7 +76,7 @@ class TermById(MethodResource, Resource):
 
 
 class TermDeleteById(MethodResource, Resource):
-    @doc(description='Contract Terms', tags=['Contract Terms'])
+    @doc(description='Terms', tags=['Terms'])
     # @check_for_session
     # @Credentials.check_for_token
     # @marshal_with(BulkResponseQuerySchema)
@@ -111,7 +109,7 @@ class TermDeleteById(MethodResource, Resource):
 
 
 class TermCreate(MethodResource, Resource):
-    @doc(description='Contract Terms', tags=['Contract Terms'])
+    @doc(description='Terms', tags=['Terms'])
     # @check_for_session
     # @Credentials.check_for_token
     @use_kwargs(TermRequestSchema)
@@ -134,7 +132,7 @@ class TermCreate(MethodResource, Resource):
 
 
 class TermUpdate(MethodResource, Resource):
-    @doc(description='Contract Terms', tags=['Contract Terms'])
+    @doc(description='Terms', tags=['Terms'])
     # @check_for_session
     # @Credentials.check_for_token
     @marshal_with(BulkResponseQuerySchema)
@@ -161,7 +159,7 @@ class TermUpdate(MethodResource, Resource):
 
 
 class GetContractTerms(MethodResource, Resource):
-    @doc(description='Contract Terms', tags=['Contract Terms'])
+    @doc(description='Terms', tags=['Terms'])
     # @check_for_session
     # @Credentials.check_for_token
     # @marshal_with(BulkResponseQuerySchema)
@@ -194,3 +192,26 @@ class GetContractTerms(MethodResource, Resource):
             # print(f'term = {term_arry}')
             return term_arry
         return 'No record found for this ID'
+
+
+# get terms by obligation id
+class TermByObligationId(MethodResource, Resource):
+    @doc(description='Terms', tags=['Terms'])
+    # @check_for_session
+    # @Credentials.check_for_token
+    # @marshal_with(BulkResponseQuerySchema)
+    def get(self, obligationID):
+        query = QueryEngine()
+        response = json.loads(
+            query.select_query_gdb(purpose=None, dataRequester=None, additionalData="termByObligationId",
+                                   contractID=None,
+                                   contractRequester=None, contractProvider=None, obligationID=obligationID))
+        res = response["results"]['bindings']
+        if len(res) > 0:
+            data = {
+                'termId': res[0]['termId']['value'],
+                'description': res[0]['description']['value'],
+                'createDate': res[0]['createDate']['value']
+            }
+            return data
+        return "No record available for this term id"

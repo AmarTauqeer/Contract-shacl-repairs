@@ -103,6 +103,10 @@ api.add_resource(ContractorById,
                  '/contract/contractor/<string:contractorID>/')
 docs.register(ContractorById)
 
+api.add_resource(ContractByTermId,
+                 '/contract/<string:termID>/')
+docs.register(ContractByTermId)
+
 api.add_resource(CompanyById,
                  '/contract/company/<string:companyID>/')
 docs.register(CompanyById)
@@ -146,7 +150,7 @@ docs.register(GetCompany)
 api.add_resource(GetTermTypes, '/contract/term/types')
 docs.register(GetTermTypes)
 
-api.add_resource(GetTerms, '/contract/terms/')
+api.add_resource(GetTerms, '/terms/')
 docs.register(GetTerms)
 
 api.add_resource(GetContractSignatures, '/contract/signatures/<string:contractID>')
@@ -199,6 +203,10 @@ docs.register(TermTypeById)
 api.add_resource(TermById,
                  '/contract/term/<string:termID>/')
 docs.register(TermById)
+
+api.add_resource(TermByObligationId,
+                 '/term/<string:obligationID>/')
+docs.register(TermByObligationId)
 
 api.add_resource(GetObligationByTermId,
                  '/term/obligations/<string:termID>/')

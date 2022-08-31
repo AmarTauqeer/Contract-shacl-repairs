@@ -205,6 +205,85 @@ class ContractByContractId(MethodResource, Resource):
         return 'No data found for this ID'
 
 
+class ContractByTermId(MethodResource, Resource):
+    @doc(description='Contracts', tags=['Contracts'])
+    # @check_for_session
+    # @Credentials.check_for_token
+    # @marshal_with(BulkResponseQuerySchema)
+    def get(self, termID):
+        query = QueryEngine()
+        response = json.loads(
+            query.select_query_gdb(purpose=None, dataRequester=None, additionalData="contractBytermID", contractID=None,
+                                   contractRequester=None, contractProvider=None, contractorID=None,termID=termID))
+
+        data = response["results"]['bindings']
+        if len(data) != 0:
+            contractor_array = []
+            term_array = []
+            signature_array = []
+
+            for d in data:
+                contract_id=d['contractId']['value']
+                # get contractors
+                contractors = GetContractContractors.get(self, contract_id)
+                contractors = contractors.json
+                if contractors != 'No record found for this ID':
+                    for c in contractors:
+                        cid = c['contractorId']
+                        contractor_array.append(cid)
+
+                # get terms
+                terms = GetContractTerms.get(self, contract_id)
+                terms = terms.json
+                if terms != 'No record found for this ID':
+                    for t in terms:
+                        tid = t['termId']
+                        term_array.append(tid)
+
+                # get signatures
+                sig = GetContractSignatures.get(self, contract_id)
+                sig = sig.json
+                # print(sig)
+                if sig != 'No record found for this ID':
+                    for s in sig:
+                        # print(s)
+                        sid = s['signatureId']
+                        signature_array.append(sid)
+
+            obj = {
+                'contractors': contractor_array,
+                'terms': term_array,
+                # 'obligations': obligation_array,
+                'signatures': signature_array
+            }
+
+            consentId = d['consentId']['value']
+
+            category_data = d['contractCategory']['value'][45:]
+            if category_data != 'categoryBusinessToConsumer':
+                category_data = 'categoryBusinessToBusiness'
+                consentId = ''
+            new_data = {
+                'contractId': d['contractId']['value'],
+                'contractStatus': d['contractStatus']['value'][45:],
+                'contractCategory': category_data,
+                'consentId': consentId,
+                'purpose': d['purpose']['value'],
+                'contractType': d['contractType']['value'][45:],
+                'effectiveDate': d['effectiveDate']['value'],
+                'executionDate': d['executionDate']['value'],
+                'endDate': d['endDate']['value'],
+                'medium': d['medium']['value'][59:],
+                'consideration': d['consideration']['value'],
+                'value': d['value']['value'],
+                'identifiers': obj
+            }
+            data = new_data
+            if len(data) != 0:
+                return data
+        return 'No data found for this ID'
+
+
 class ContractUpdate(MethodResource, Resource):
     @doc(description='Contracts', tags=['Contracts'])
     # @check_for_session
@@ -401,7 +480,7 @@ class ContractStatusUpdateById(MethodResource, Resource):
              ?Contract rdf:type fibo-fnd-agr-ctr:Contract;
                         :contractID ?contractId;
               FILTER(?contractId = "{1}")
-             }}""").format('\'{}^^xsd:dateTime\''.format(violation_date), contractID, status)
+             }}""").format('\'{}\'^^xsd:dateTime'.format(violation_date), contractID, status)
 
         # print(query)
         sparql.setQuery(query)

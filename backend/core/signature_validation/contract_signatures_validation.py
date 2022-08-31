@@ -20,7 +20,6 @@ class ContractSignatureValidation(QueryEngine):
         return response
 
     def post_data(self, validated_data, type, signature_id):
-        ContractId = validated_data["ContractId"]
         ContractorId = validated_data["ContractorId"]
         CreateDate = validated_data["CreateDate"]
         Signature = validated_data["Signature"]
@@ -37,7 +36,6 @@ class ContractSignatureValidation(QueryEngine):
             ############## end encryption ########################
             respone = self.post_sparql(self.get_username(), self.get_password(),
                                        self.insert_query_contract_signature(SignatureId=SignatureId,
-                                                                    ContractId=ContractId,
                                                                     ContractorId=ContractorId,
                                                                     CreateDate=CreateDate,
                                                                     Signature=Signature,
@@ -62,7 +60,6 @@ class ContractSignatureValidation(QueryEngine):
                 # insert into kg
                 respone = self.post_sparql(self.get_username(), self.get_password(),
                                            self.insert_query_contract_signature(SignatureId=SignatureId,
-                                                                    ContractId=ContractId,
                                                                     ContractorId=ContractorId,
                                                                     CreateDate=CreateDate,
                                                                     Signature=Signature,
