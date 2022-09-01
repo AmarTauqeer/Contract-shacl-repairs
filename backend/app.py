@@ -236,7 +236,7 @@ docs.register(ObligationDeleteById)
 # docs.register(GetObligationIdentifierById)
 
 api.add_resource(ObligationStatusUpdateByObligationId,
-                 '/contract/obligation/status/<string:obligationID>/<string:termID>/<string:contractorID>/<string:state>/')
+                 '/contract/obligation/states/<string:obligationID>/<string:state>/')
 docs.register(ObligationStatusUpdateByObligationId)
 
 api.add_resource(ContractStatusUpdateById,

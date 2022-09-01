@@ -33,6 +33,7 @@ class GetObligations(MethodResource, Resource):
                     'exectionDate': obl_data[0]['executionDate'],
                     'endDate': obl_data[0]['endDate'],
                     'fulfillmentDate': obl_data[0]['fulfillmentDate'],
+                    'contractIdB2C': obl_data[0]['contractIdB2C'],
                     'contractorId': obl_data[0]['contractorId'],
                 }
                 obligation_sub_array.append(new_data)
@@ -205,14 +206,14 @@ class ContractObligationUpdate(MethodResource, Resource):
 class ObligationStatusUpdateByObligationId(MethodResource, Resource):
     @doc(description='Obligations', tags=['Obligations'])
     # @Credentials.check_for_token
-    def get(self, obligationID, termID, contractorID, state):
+    def get(self, obligationID, state):
 
         host_post = os.getenv("HOST_URI_POST")
         hostname = host_post
         userid = os.getenv("user_name")
         password = os.getenv("password")
 
-        updated_date = date.today()
+        # updated_date = date.today()
         sparql = SPARQLWrapper(hostname)
         sparql.setHTTPAuth(BASIC)
         sparql.setCredentials(userid, password)
@@ -226,30 +227,13 @@ class ObligationStatusUpdateByObligationId(MethodResource, Resource):
                     ?Obligation :hasStates :stateFulfilled.
                     ?Obligation :hasStates :stateInvalid.
                     ?Obligation :hasStates :stateExpired.}}
-            INSERT {{?Obligation :hasStates :{3}.}}
+            INSERT {{?Obligation :hasStates :{1}.}}
             where {{
                      ?Obligation rdf:type :Obligation;
                                  :hasStates ?state;
                                  :obligationID ?obligationId .
                      FILTER(?obligationId = "{0}") .
-                    {{
-                    select ?Term
-                    where{{
-                    ?Term rdf:type :TermsAndConditions;
-                    :termID ?termId;
-                    filter(?termId="{1}") .
-
-                    }}
-                    }}
-                     {{
-                    select ?Contractor
-                    where{{
-                    ?Contractor rdf:type prov:Agent;
-                        :contractorID ?contractorId .
-                    filter(?contractorId="{2}")
-                    }}
-                    }}
-    }}""").format(obligationID, termID, contractorID, state)
+    }}""").format(obligationID, state)
 
         sparql.setQuery(query)
         sparql.method = "POST"

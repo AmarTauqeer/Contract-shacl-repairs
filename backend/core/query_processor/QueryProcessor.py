@@ -377,7 +377,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                 ?obl fibo-fnd-agr-ctr:hasExecutionDate ?executionDate .
                 ?obl :hasEndDate ?endDate .
                 ?obl :fulfillmentDate ?fulfillmentDate .
-                ?obl dct:identifier ?contractIdB2C .
+                ?obl :hasContractIdB2C ?contractIdB2C .
                 ?obl :obligationID ?obligationId .
                 filter(?termId="{1}") .
             }}""").format(self.prefix(), id)
@@ -440,7 +440,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
              ?Obligation rdf:type :Obligation;
                 :obligationID ?obligationId;
                 :contractorID ?contractorId;
-                dct:identifier ?contractIdB2C;
+                :hasContractIdB2C ?contractIdB2C;
                 dct:description ?obligationDescription;
                 fibo-fnd-agr-ctr:hasExecutionDate ?executionDate;
                 :hasEndDate ?endDate;
@@ -486,7 +486,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                 ?Obligation rdf:type :Obligation;
                     :obligationID ?obligationId;
                     :contractorID ?contractorId;
-                    dct:identifier ?contractIdB2C;
+                    :hasContractIdB2C ?contractIdB2C;
                     dct:description ?obligationDescription;
                     fibo-fnd-agr-ctr:hasExecutionDate ?executionDate;
                     :hasEndDate ?endDate;
@@ -505,7 +505,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                     :obligationID ?obligationId;
                     :contractorID ?contractorId;
                     :termID ?termId;
-                    dct:identifier ?contractIdB2C;
+                    :hasContractIdB2C ?contractIdB2C;
                 filter(?obligationId="{1}") .
             }}""").format(self.prefix(), id)
 
@@ -651,7 +651,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
             :{1} rdf:type :Obligation;
                         dct:description "{2}";
                         :contractorID "{3}";
-                        dct:identifier "{4}";
+                        :hasContractIdB2C "{4}";
                         :hasStates :{5};
                         fibo-fnd-agr-ctr:hasExecutionDate {6};
                         :hasEndDate {7};
