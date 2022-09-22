@@ -1,9 +1,9 @@
 version: "3"
 services:
-  contractact:
+  contractshaclact:
     container_name: contract-shacl-act
     hostname: contract-shacl-act
     restart: always
     build: ./
     ports:
-      - 5003:5000
+      - 5004:5004

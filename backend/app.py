@@ -266,4 +266,4 @@ if __name__ == '__main__':
     # scheduler.add_job(id='Contract compliance task', func=compliance, trigger='interval', minutes=1440)
     # if current_date >= date(2022, 4, 26):
     #     scheduler.start()
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0',port=5004)
