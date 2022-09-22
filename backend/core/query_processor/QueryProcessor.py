@@ -555,7 +555,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                         fibo-fnd-agr-ctr:hasEffectiveDate {4};
                         fibo-fnd-agr-ctr:hasExecutionDate {5};
                         :hasEndDate {6};
-                        :inMedium {7};
+                        :inMedium "{7}";
                         :hasContractStatus :{8};
                         :hasContractCategory :{9};
                         :consentID "{10}";
@@ -563,7 +563,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                         rdf:value {12};
                          {13};
                          {14};
-                         {15} ;
+                         {15};
                          :contractID "{1}" .
                    }}       
                
@@ -661,7 +661,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
           """.format(self.prefix(), ObligationId, Description, ContractorId, ContractIdB2C, State,
                      '\'{}\'^^xsd:dateTime'.format(ExecutionDate), '\'{}\'^^xsd:dateTime'.format(EndDate),
                      '\'{}\'^^xsd:dateTime'.format(FulfillmentDate)))
-        # print(insquery)
+        print(insquery)
         return insquery
 
     def insert_query_contract_signature(self, SignatureId, ContractorId, CreateDate, Signature):

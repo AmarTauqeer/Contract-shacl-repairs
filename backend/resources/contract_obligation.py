@@ -66,7 +66,7 @@ class GetObligationByTermId(MethodResource, Resource):
                             'exectionDate': d['executionDate']['value'],
                             'endDate': d['endDate']['value'],
                             'fulfillmentDate': d['fulfillmentDate']['value'],
-                            'contractIdB2C': d['contractIdB2C']['value'][45:],
+                            'contractIdB2C': d['contractIdB2C']['value'],
                             'termId': termID,
                             }
                 obligation_array.append(new_data)
@@ -106,7 +106,7 @@ class ObligationById(MethodResource, Resource):
                             'endDate': d['endDate']['value'],
                             'fulfillmentDate': d['fulfillmentDate']['value'],
                             'contractorId': d['contractorId']['value'],
-                            'contractIdB2C': d['contractIdB2C']['value'][45:],
+                            'contractIdB2C': d['contractIdB2C']['value'],
                             }
                 obligation_array.append(new_data)
             if len(obligation_array) != 0:
@@ -130,7 +130,7 @@ class GetObligationIdentifierById(MethodResource, Resource):
         data = []
         if len(res) != 0:
             for r in res:
-                a = r['contractIdB2C']['value'][45:]
+                a = r['contractIdB2C']['value']
                 data.append(a)
             return data
         return 'No record found for this ID'
@@ -144,6 +144,7 @@ class ObligationCreate(MethodResource, Resource):
     def post(self, **kwargs):
         schema_serializer = ObligationRequestSchema()
         data = request.get_json(force=True)
+        print(data)
         uuidOne = uuid.uuid1()
         obligation_id = "ob_" + str(uuidOne)
         validated_data = schema_serializer.load(data)

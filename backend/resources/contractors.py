@@ -67,7 +67,7 @@ class ContractorById(MethodResource, Resource):
                 'territory': territory,#res[0]['territory']['value'],
                 'address': address,#res[0]['address']['value'],
                 'vat': vat,#res[0]['vat']['value'],
-                'companyId': res[0]['companyId']['value'][45:],
+                'companyId': res[0]['companyId']['value'],
                 'createDate': res[0]['createDate']['value'],
                 'role': res[0]['role']['value'][45:],
             }
@@ -162,7 +162,7 @@ class GetContractors(MethodResource, Resource):
                     'territory': territory,#r['territory']['value'],
                     'address': address,#r['address']['value'],
                     'vat': vat,#r['vat']['value'],
-                    'companyId': r['companyId']['value'][45:],
+                    'companyId': r['companyId']['value'],
                     'createDate': r['createDate']['value'],
                     'role': r['role']['value'][45:],
 

@@ -30,14 +30,17 @@ class GetContractCompliance(MethodResource, Resource):
         print('scheduler')
         # self.get_consent_state("test")
         obligatons = response["results"]['bindings']
-        current_data = date(2024, 4, 5)
-        # current_data = date.today()
+        # current_data = date(2024, 4, 5)
+        current_data = date.today()
+
         for x in obligatons:
             obligation_id = x["obligationId"]["value"]
             edate = x["endDate"]["value"][:10]
             obl_state = x["state"]["value"][45:]
             obl_desc = x["obligationDescription"]["value"]
             contractor_id = x["contractorId"]["value"][45:]
+
+
             #  get terms
             get_term = TermByObligationId.get(self, obligation_id)
             my_json = get_term.data.decode('utf-8')
@@ -157,6 +160,7 @@ class GetContractCompliance(MethodResource, Resource):
             # handle single business to consumer contract
             elif b2c != "" and consent == "empty":
                 print(f'b2c without consent')
+
                 # print(b2c_data)
                 if current_data >= date_time_obj and obl_state == 'statePending' \
                         and b2c_contract_status not in (
@@ -168,16 +172,16 @@ class GetContractCompliance(MethodResource, Resource):
         """
             if the consent expires and data controller still use that cosent
         """
-        # list of b2b contracts
-        b2c_all_contracts_data = Contracts.get(self)
-        b2c_all_contracts_data = b2c_all_contracts_data.json
+        # list contracts
+        all_contracts_data = Contracts.get(self)
+        all_contracts_data = all_contracts_data.json
 
-        if b2c_all_contracts_data != 'No record is found':
+        if all_contracts_data != 'No record is found':
 
-            for b in b2c_all_contracts_data:
+            for b in all_contracts_data:
 
                 contract = b['contractId']
-
+                # list of b2b contracts
                 if 'contb2b_' in contract:
                     c_obj = ContractByContractId.get(self, contract)
                     c_obj = c_obj.json
@@ -206,6 +210,7 @@ class GetContractCompliance(MethodResource, Resource):
                                             if consent_state == 'Invalid' and contract_status not in ['statusExpired',
                                                                                                       'statusTerminated']:
 
+
                                                 contractors = GetContractContractors.get(self, contract_id)
                                                 contractors = contractors.json
                                                 for con in contractors:
@@ -222,6 +227,7 @@ class GetContractCompliance(MethodResource, Resource):
                                                     mail.send(receiver=email,
                                                               subject='Violation/Expiration of Obligation',
                                                               message=message)
+
         return 'Success'
 
     def send_email(self, type, contract_id, obl_desc, obligation_id):

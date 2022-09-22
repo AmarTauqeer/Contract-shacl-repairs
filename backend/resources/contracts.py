@@ -482,7 +482,6 @@ class ContractStatusUpdateById(MethodResource, Resource):
               FILTER(?contractId = "{1}")
              }}""").format('\'{}\'^^xsd:dateTime'.format(violation_date), contractID, status)
 
-        # print(query)
         sparql.setQuery(query)
         sparql.method = "POST"
         sparql.queryType = "INSERT"
