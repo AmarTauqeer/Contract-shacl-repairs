@@ -1,3 +1,5 @@
+import requests
+
 from resources.imports import *
 from resources.schemas import *
 from core.security.RsaAesDecryption import RsaAesDecrypt
@@ -98,9 +100,32 @@ class TermTypeCreate(MethodResource, Resource):
         data = request.get_json(force=True)
         uuidOne = uuid.uuid1()
         term_type_id = "term_type_" + str(uuidOne)
+        # shacl validation
+        validation_data= [{
+                'type_validation':'termtypes',
+                'typeId':term_type_id,
+                'name': data['Name'],
+                'description': data['Description'],
+            }]
+
+        print(f"validation data= {validation_data}")
+        # send data to validator and receive result
+        validator_url = "https://actool.contract-shacl.sti2.at/validataion"
+        r = requests.post(validator_url, json=validation_data)
+        validation_result = r.text
+        print(validation_result)
+        if validation_result!="":
+            return  validation_result
+
+        if validation_result!="":
+            validation_result_data={}
+            if "hasName" in validation_result:
+                validation_result_data['hasName']='check name field'
+            if 'description' in validation_result:
+                validation_result_data['description']='check description field'
+            return validation_result_data
 
         validated_data = schema_serializer.load(data)
-        # print(validated_data)
         av = TermTypeValidation()
         response = av.post_data(validated_data, type="insert", term_type_id=term_type_id)
         if response == 'Success':

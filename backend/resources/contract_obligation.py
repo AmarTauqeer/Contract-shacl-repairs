@@ -147,6 +147,25 @@ class ObligationCreate(MethodResource, Resource):
         print(data)
         uuidOne = uuid.uuid1()
         obligation_id = "ob_" + str(uuidOne)
+
+        # # shacl validation
+        # validation_data= [{
+        #         'type_validation':'termtypes',
+        #         'typeId':term_id,
+        #         'name': data['Name'],
+        #         'description': data['Description'],
+        #     }]
+        #
+        # print(f"validation data= {validation_data}")
+        # # send data to validator and receive result
+        # validator_url = "http://localhost:8080/RestDemo/demo"
+        # r = requests.post(validator_url, json=validation_data)
+        # validation_result = r.text
+        # print(validation_result)
+        # if validation_result!="":
+        #     return  validation_result
+
+
         validated_data = schema_serializer.load(data)
         av = ObligationValidation()
         response = av.post_data(validated_data, type="insert", obligation_id=obligation_id)

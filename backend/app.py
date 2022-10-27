@@ -73,6 +73,7 @@ docs.register(RegisterUser)
 api.add_resource(Login, '/contract/login/')
 docs.register(Login)
 
+
 # api.add_resource(Logout, '/contract/logout/')
 # docs.register(Logout)
 
