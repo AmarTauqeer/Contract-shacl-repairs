@@ -196,7 +196,7 @@ class ObligationCreate(MethodResource, Resource):
         #
         # print(f"validation data= {validation_data}")
         # send data to validator and receive result
-        validator_url = "http://127.0.0.1:8080/RestDemo/validation"
+        validator_url = "http://138.232.18.138:8080/RestDemo/validation"
         r = requests.post(validator_url, json=validation_data)
         # print(f"validation result= {r.text}")
         validation_result = r.text
