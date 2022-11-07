@@ -1,3 +1,5 @@
+import requests
+
 from resources.contract_obligation import ObligationById, GetObligationByTermId, ObligationDeleteById
 from resources.imports import *
 from resources.schemas import *
@@ -118,6 +120,31 @@ class TermCreate(MethodResource, Resource):
         data = request.get_json(force=True)
         uuidOne = uuid.uuid1()
         term_id = "term_" + str(uuidOne)
+        # shacl validation
+        validation_data= [{
+                'validation':'term',
+                'termId':term_id,
+                'termTypeId': data['TermTypeId'],
+                'createDate': data['CreateDate'],
+                'description': data['Description'],
+            }]
+
+        print(f"validation data= {validation_data}")
+        # send data to validator and receive result
+        validator_url = "http://localhost:8080/RestDemo/validation"
+        r = requests.post(validator_url, json=validation_data)
+        validation_result = r.text
+        # print(validation_result)
+
+        if validation_result!="":
+            return  validation_result
+        # if validation_result!="":
+        #     validation_result_data={}
+        #     if "hasName" in validation_result:
+        #         validation_result_data['hasName']='check name field'
+        #     if 'description' in validation_result:
+        #         validation_result_data['description']='check description field'
+        #     return validation_result_data
 
         validated_data = schema_serializer.load(data)
         # print(validated_data)
@@ -147,6 +174,25 @@ class TermUpdate(MethodResource, Resource):
         decoded_data = json.loads(my_json)
         if decoded_data != 'No record available for this term id':
             if decoded_data['termId'] == term_id:
+                # shacl validation
+                validation_data = [{
+                    'validation': 'term',
+                    'termId': term_id,
+                    'termTypeId': data['TermTypeId'],
+                    'createDate': data['CreateDate'],
+                    'description': data['Description'],
+                }]
+
+                print(f"validation data= {validation_data}")
+                # send data to validator and receive result
+                validator_url = "http://localhost:8080/RestDemo/validation"
+                r = requests.post(validator_url, json=validation_data)
+                validation_result = r.text
+                # print(validation_result)
+
+                if validation_result != "":
+                    return jsonify({'validation_error':validation_result})
+
                 validated_data = schema_serializer.load(data)
                 av = TermValidation()
                 response = av.post_data(validated_data, type="update", term_id=None)

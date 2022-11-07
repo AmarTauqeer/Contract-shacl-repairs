@@ -1,3 +1,5 @@
+import requests
+
 from core.security.RsaAesDecryption import RsaAesDecrypt
 from resources.contract_obligation import GetObligationByTermId, ObligationDeleteById
 from resources.contract_signatures import GetContractSignatures, SignatureDeleteById
@@ -304,6 +306,29 @@ class ContractUpdate(MethodResource, Resource):
                 status_value = decoded_data['contractStatus']
                 signed = re.findall(r"Signed", status_value)
                 if len(signed) == 0:
+                    # shacl validation
+                    validation_data = [{
+                        'validation': 'contract',
+                        'contractId': contract_id,
+                        'contractType': data['ContractType'],
+                        'considerationValue': data['Value'],
+                        'contractCategory': data['ContractCategory'],
+                        'contractStatus': data['ContractStatus'],
+                        'purpose': data['Purpose'],
+                        'effectiveDate': data['EffectiveDate'],
+                        'endDate': data['EndDate'],
+                        'executionDate': data['ExecutionDate'],
+                    }]
+
+                    print(f"validation data= {validation_data}")
+                    # send data to validator and receive result
+                    validator_url = "http://localhost:8080/RestDemo/validation"
+                    r = requests.post(validator_url, json=validation_data)
+                    validation_result = r.text
+                    print(validation_result)
+
+                    if validation_result != "":
+                        return validation_result
                     validated_data = schema_serializer.load(data)
                     cv = ContractValidation()
                     response = cv.post_data(validated_data, type="update", contract_id=None)
@@ -331,6 +356,37 @@ class ContractCreate(MethodResource, Resource):
             contract_id = "contb2b_" + str(uuidOne)
         else:
             contract_id = "contb2c_" + str(uuidOne)
+
+        # shacl validation
+        validation_data= [{
+                'validation':'contract',
+                'contractId':contract_id,
+                'contractType': data['ContractType'],
+                'considerationValue': data['ConsiderationValue'],
+                'contractCategory': data['ContractCategory'],
+                'contractStatus': data['ContractStatus'],
+                'purpose': data['Purpose'],
+                'effectiveDate': data['EffectiveDate'],
+                'endDate': data['EndDate'],
+                'executionDate': data['ExecutionDate'],
+            }]
+
+        # print(f"validation data= {validation_data}")
+        # send data to validator and receive result
+        validator_url = "http://localhost:8080/RestDemo/validation"
+        r = requests.post(validator_url, json=validation_data)
+        validation_result = r.text
+        # print(validation_result)
+
+        if validation_result!="":
+            return  validation_result
+        # if validation_result!="":
+        #     validation_result_data={}
+        #     if "hasName" in validation_result:
+        #         validation_result_data['hasName']='check name field'
+        #     if 'description' in validation_result:
+        #         validation_result_data['description']='check description field'
+        #     return validation_result_data
         validated_data = schema_serializer.load(data)
         cv = ContractValidation()
         response = cv.post_data(validated_data, type="insert", contract_id=contract_id)

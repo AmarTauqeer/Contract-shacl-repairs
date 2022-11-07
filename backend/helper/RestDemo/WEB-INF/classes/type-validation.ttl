@@ -1,9 +1,0 @@
-@prefix core: <http://ontologies.atb-bremen.de/smashHitCore#> .
-@prefix dct: <http://purl.org/dc/terms/> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-core:term_type_8cdb028c-2e96-11ed-be7d-3f8589292a29 a core:TermTypes;
-  core:typeID "term_type_8cdb028c-2e96-11ed-be7d-3f8589292a29";
-  core:hasName "ueeexcxzcz";
-  dct:description "Data sharing in smashHit based on UC1 and UC2" .

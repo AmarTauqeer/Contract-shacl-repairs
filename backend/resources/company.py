@@ -1,3 +1,5 @@
+import requests
+
 from resources.imports import *
 from resources.schemas import *
 
@@ -16,11 +18,35 @@ class CompanyUpdate(MethodResource, Resource):
         my_json = result.data.decode('utf8')
         decoded_data = json.loads(my_json)
         if len(decoded_data) > 0:
+            # shacl validation
+            validation_data = [{
+                'validation': 'company',
+                'companyId': company_id,
+                'country': data['Country'],
+                'createDate': data['CreateDate'],
+                'email': data['Email'],
+                'name': data['Name'],
+                'address': data['Address'],
+                'phone': data['Phone'],
+                'territory': data['Territory'],
+                'vat': data['Vat'],
+            }]
+
+            print(f"validation data= {validation_data}")
+            # send data to validator and receive result
+            validator_url = "http://localhost:8080/RestDemo/validation"
+            r = requests.post(validator_url, json=validation_data)
+            validation_result = r.text
+            # print(validation_result)
+
+            if validation_result != "":
+                return jsonify({'validation_error':validation_result})
             validated_data = schema_serializer.load(data)
+
             av = CompanyValidation()
             response = av.post_data(validated_data, type="update", company_id=None)
             if (response):
-                return response
+                return jsonify({'Success': "Record updated successfully."})
             else:
                 return jsonify({'Error': "Record not updated due to some errors."})
         else:
@@ -64,6 +90,38 @@ class CompanyCreate(MethodResource, Resource):
         data = request.get_json(force=True)
         uuidOne = uuid.uuid1()
         company_id = "cm_" + str(uuidOne)
+
+        # shacl validation
+        validation_data= [{
+                'validation':'company',
+                'companyId':company_id,
+                'country': data['Country'],
+                'createDate': data['CreateDate'],
+                'email': data['Email'],
+                'name': data['Name'],
+                'address': data['Address'],
+                'phone': data['Phone'],
+                'territory': data['Territory'],
+                'vat': data['Vat'],
+            }]
+
+        print(f"validation data= {validation_data}")
+        # send data to validator and receive result
+        validator_url = "http://localhost:8080/RestDemo/validation"
+        r = requests.post(validator_url, json=validation_data)
+        validation_result = r.text
+        # print(validation_result)
+
+        if validation_result!="":
+            return  validation_result
+        # if validation_result!="":
+        #     validation_result_data={}
+        #     if "hasName" in validation_result:
+        #         validation_result_data['hasName']='check name field'
+        #     if 'description' in validation_result:
+        #         validation_result_data['description']='check description field'
+        #     return validation_result_data
+
 
         validated_data = schema_serializer.load(data)
         av = CompanyValidation()

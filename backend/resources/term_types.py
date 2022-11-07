@@ -102,7 +102,7 @@ class TermTypeCreate(MethodResource, Resource):
         term_type_id = "term_type_" + str(uuidOne)
         # shacl validation
         validation_data= [{
-                'type_validation':'termtypes',
+                'validation':'termtypes',
                 'typeId':term_type_id,
                 'name': data['Name'],
                 'description': data['Description'],
@@ -110,20 +110,21 @@ class TermTypeCreate(MethodResource, Resource):
 
         print(f"validation data= {validation_data}")
         # send data to validator and receive result
-        validator_url = "https://actool.contract-shacl.sti2.at/validataion"
+        validator_url = "http://localhost:8080/RestDemo/validation"
         r = requests.post(validator_url, json=validation_data)
         validation_result = r.text
-        print(validation_result)
+        # print(validation_result)
+
         if validation_result!="":
             return  validation_result
 
-        if validation_result!="":
-            validation_result_data={}
-            if "hasName" in validation_result:
-                validation_result_data['hasName']='check name field'
-            if 'description' in validation_result:
-                validation_result_data['description']='check description field'
-            return validation_result_data
+        # if validation_result!="":
+        #     validation_result_data={}
+        #     if "hasName" in validation_result:
+        #         validation_result_data['hasName']='check name field'
+        #     if 'description' in validation_result:
+        #         validation_result_data['description']='check description field'
+        #     return validation_result_data
 
         validated_data = schema_serializer.load(data)
         av = TermTypeValidation()
@@ -152,6 +153,25 @@ class TermTypeUpdate(MethodResource, Resource):
         decoded_data = json.loads(my_json)
         if decoded_data != 'No record available for this term type id':
             if decoded_data['termTypeId'] == term_type_id:
+
+                # shacl validation
+                validation_data = [{
+                    'validation': 'termtypes',
+                    'typeId': term_type_id,
+                    'name': data['Name'],
+                    'description': data['Description'],
+                }]
+
+                print(f"validation data= {validation_data}")
+                # send data to validator and receive result
+                validator_url = "http://localhost:8080/RestDemo/validation"
+                r = requests.post(validator_url, json=validation_data)
+                validation_result = r.text
+                # print(validation_result)
+
+                if validation_result != "":
+                    return jsonify({"validation_error":validation_result})
+
                 validated_data = schema_serializer.load(data)
                 av = TermTypeValidation()
                 response = av.post_data(validated_data, type="update", term_type_id=None)

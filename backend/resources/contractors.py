@@ -1,3 +1,5 @@
+import requests
+
 from core.security.RsaAesDecryption import RsaAesDecrypt
 from resources.imports import *
 from resources.schemas import *
@@ -18,6 +20,31 @@ class ContractorUpdate(MethodResource, Resource):
         my_json = result.data.decode('utf8')
         decoded_data = json.loads(my_json)
         if len(decoded_data) > 0:
+            # shacl validation
+            validation_data = [{
+                'validation': 'contractor',
+                'contractorId': contractor_id,
+                'companyId': data['CompanyId'],
+                'country': data['Country'],
+                'createDate': data['CreateDate'],
+                'email': data['Email'],
+                'name': data['Name'],
+                'address': data['Address'],
+                'phone': data['Phone'],
+                'role': data['Role'],
+                'territory': data['Territory'],
+                'vat': data['Vat'],
+            }]
+
+            print(f"validation data= {validation_data}")
+            # send data to validator and receive result
+            validator_url = "http://localhost:8080/RestDemo/validation"
+            r = requests.post(validator_url, json=validation_data)
+            validation_result = r.text
+
+            if validation_result != "":
+                return jsonify({'validation_error':validation_result})
+
             validated_data = schema_serializer.load(data)
             av = ContractorValidation()
             response = av.post_data(validated_data, type="update", contractor_id=None)
@@ -85,6 +112,40 @@ class ContractorCreate(MethodResource, Resource):
         data = request.get_json(force=True)
         uuidOne = uuid.uuid1()
         contractor_id = "c_" + str(uuidOne)
+
+        # shacl validation
+        validation_data= [{
+                'validation':'contractor',
+                'contractorId':contractor_id,
+                'companyId': data['CompanyId'],
+                'country': data['Country'],
+                'createDate': data['CreateDate'],
+                'email': data['Email'],
+                'name': data['Name'],
+                'address': data['Address'],
+                'phone': data['Phone'],
+                'role': data['Role'],
+                'territory': data['Territory'],
+                'vat': data['Vat'],
+            }]
+
+        print(f"validation data= {validation_data}")
+        # send data to validator and receive result
+        validator_url = "http://localhost:8080/RestDemo/validation"
+        r = requests.post(validator_url, json=validation_data)
+        validation_result = r.text
+        # print(validation_result)
+
+        if validation_result!="":
+            return  validation_result
+
+        # if validation_result!="":
+        #     validation_result_data={}
+        #     if "hasName" in validation_result:
+        #         validation_result_data['hasName']='check name field'
+        #     if 'description' in validation_result:
+        #         validation_result_data['description']='check description field'
+        #     return validation_result_data
 
         validated_data = schema_serializer.load(data)
         av = ContractorValidation()

@@ -1,4 +1,8 @@
 # from resources.contracts import ContractByContractId
+import os
+
+import requests
+
 from core.security.RsaAesDecryption import RsaAesDecrypt
 from resources.imports import *
 from resources.schemas import *
@@ -146,26 +150,67 @@ class ObligationCreate(MethodResource, Resource):
         data = request.get_json(force=True)
         print(data)
         uuidOne = uuid.uuid1()
-        obligation_id = "ob_" + str(uuidOne)
 
-        # # shacl validation
-        # validation_data= [{
-        #         'type_validation':'termtypes',
-        #         'typeId':term_id,
-        #         'name': data['Name'],
-        #         'description': data['Description'],
-        #     }]
+        obligation_id = "ob_" + str(uuidOne)
+        # contractor_id = data['ContractorId']
+        # description= data['Description']
+        # end_date= data['EndDate']
+        # execution_date= data['ExecutionDate']
+        # fulfillment_date= data['FulfillmentDate']
+        # state= data['State']
+        #
+        # path=os.getcwd()
+        #
+        # fh = open('/home/amar-tauqeer/eclipse-workspace/RestDemo/src/main/resources/obligation-data.ttl','w')
+        # fh.write('@prefix base: <http://ontologies.atb-bremen.de/smashHitCore#> .\n'
+        #          '@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n'
+        #          '@prefix dc: <http://purl.org/dc/elements/1.1/> .\n'
+        #          '@prefix dpv: <http://www.w3.org/ns/dpv#> .\n'
+        #          '@prefix prov: <http://www.w3.org/ns/prov#> .\n'
+        #          '@prefix dcat: <http://www.w3.org/ns/dcat#> .\n'
+        #          '@prefix fibo-fnd-agr-ctr: <https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/> .\n'
+        #          '@prefix dct: <http://purl.org/dc/terms/> .\n'
+        #          '@prefix consent: <http://purl.org/adaptcentre/openscience/ontologies/consent#> .\n'
+        #          f'base:{obligation_id} a base:Obligation;\n'
+        #          f'     base:contractorID "base:{contractor_id}";\n'
+        #          f'     base:fulfillmentDate "{fulfillment_date}"^^xsd:dateTime;\n'
+        #          f'     base:hasEndDate "{end_date}"^^xsd:dateTime;\n'
+        #          f'     base:hasStates base:{state};\n'
+        #          f'     dct:description "{description}";\n'
+        #          f'     fibo-fnd-agr-ctr:hasExecutionDate "{execution_date}"^^xsd:dateTime .')
+        # fh.close()
+
+        # return 'true'
+
+        # shacl validation
+        validation_data= [{
+                'validation':'obligation',
+                'obligationId':obligation_id,
+                'contractorId': data['ContractorId'],
+                'description': data['Description'],
+                'endDate': data['EndDate'],
+                'executionDate': data['ExecutionDate'],
+                'fulfillmentDate': data['FulfillmentDate'],
+                'state': data['State'],
+            }]
         #
         # print(f"validation data= {validation_data}")
-        # # send data to validator and receive result
-        # validator_url = "http://localhost:8080/RestDemo/demo"
-        # r = requests.post(validator_url, json=validation_data)
-        # validation_result = r.text
-        # print(validation_result)
-        # if validation_result!="":
-        #     return  validation_result
+        # send data to validator and receive result
+        validator_url = "http://localhost:8080/RestDemo/validation"
+        r = requests.post(validator_url, json=validation_data)
+        # print(f"validation result= {r.text}")
+        validation_result = r.text
+        if validation_result!="":
+            return  validation_result
 
-
+        # # if validation_result!="":
+        # #     validation_result_data={}
+        # #     if "hasName" in validation_result:
+        # #         validation_result_data['hasName']='check name field'
+        # #     if 'description' in validation_result:
+        # #         validation_result_data['description']='check description field'
+        # #     return validation_result_data
+        # return validation_result
         validated_data = schema_serializer.load(data)
         av = ObligationValidation()
         response = av.post_data(validated_data, type="insert", obligation_id=obligation_id)
@@ -212,6 +257,27 @@ class ContractObligationUpdate(MethodResource, Resource):
         my_json = result.data.decode('utf8')
         decoded_data = json.loads(my_json)
         if len(decoded_data) > 0:
+            # # shacl validation
+            # validation_data = [{
+            #     'validation': 'obligation',
+            #     'obligationId': obligation_id,
+            #     'contractorId': data['contractorId'],
+            #     'description': data['description'],
+            #     'endDate': data['endDate'],
+            #     'executionDate': data['executionDate'],
+            #     'fulfillmentDate': data['fulfillmentDate'],
+            #     'state': data['state'],
+            # }]
+            # #
+            # # print(f"validation data= {validation_data}")
+            # # send data to validator and receive result
+            # validator_url = "http://localhost:8080/RestDemo/validation"
+            # r = requests.post(validator_url, json=validation_data)
+            # # print(f"validation result= {r.text}")
+            # validation_result = r.text
+            # if validation_result != "":
+            #     return validation_result
+            # return validation_result
             validated_data = schema_serializer.load(data)
             av = ObligationValidation()
             response = av.post_data(validated_data, type="update")
