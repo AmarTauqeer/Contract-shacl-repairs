@@ -4,6 +4,7 @@ from resources.imports import *
 from resources.schemas import *
 from core.security.RsaAesDecryption import RsaAesDecrypt
 from core.security.RsaAesEncryption import RsaAesEncrypt
+from resources.validation_shacl_insert_update import ValidationShaclInsertUpdate
 
 
 class GetTermTypes(MethodResource, Resource):
@@ -28,8 +29,8 @@ class GetTermTypes(MethodResource, Resource):
                 description = decrypted_result[1]['description']
                 data = {
                     'termTypeId': r['termTypeId']['value'],
-                    'name': name,#r['name']['value'],
-                    'description': description,#r['description']['value'],
+                    'name': name,  # r['name']['value'],
+                    'description': description,  # r['description']['value'],
                     'createDate': r['createDate']['value'],
                 }
                 term_array.append(data)
@@ -58,8 +59,8 @@ class TermTypeById(MethodResource, Resource):
             description = decrypted_result[1]['description']
             data = {
                 'termTypeId': res['termTypeId']['value'],
-                'name': name,#res['name']['value'],
-                'description': description,#res['description']['value'],
+                'name': name,  # res['name']['value'],
+                'description': description,  # res['description']['value'],
                 'createDate': res['createDate']['value'],
             }
             return data
@@ -98,25 +99,32 @@ class TermTypeCreate(MethodResource, Resource):
     def post(self, **kwargs):
         schema_serializer = TermTypeRequestSchema()
         data = request.get_json(force=True)
+        # print(data)
         uuidOne = uuid.uuid1()
         term_type_id = "term_type_" + str(uuidOne)
-        # shacl validation
-        validation_data= [{
-                'validation':'termtypes',
-                'typeId':term_type_id,
-                'name': data['Name'],
-                'description': data['Description'],
-            }]
+        validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="termtypes", typeid=term_type_id, name=data['Name'],
+                                                        desc=data['Description'])
+        if 'sh:Violation' in validation_result['term_types_violoations']:
+            return  validation_result['term_types_violoations']
 
-        print(f"validation data= {validation_data}")
-        # send data to validator and receive result
-        validator_url = "http://138.232.18.138:8080/RestDemo/validation"
-        r = requests.post(validator_url, json=validation_data)
-        validation_result = r.text
-        # print(validation_result)
-
-        if validation_result!="":
-            return  validation_result
+        # # shacl validation
+        # validation_data= [{
+        #         'validation':'termtypes',
+        #         'typeId':term_type_id,
+        #         'name': data['Name'],
+        #         'description': data['Description'],
+        #     }]
+        #
+        # print(f"validation data= {validation_data}")
+        # # send data to validator and receive result
+        # validator_url = "http://localhost:8080/RestDemo/validation"
+        # # validator_url = "http://138.232.18.138:8080/RestDemo/validation"
+        # r = requests.post(validator_url, json=validation_data)
+        # validation_result = r.text
+        # # print(validation_result)
+        #
+        # if validation_result!="":
+        #     return  validation_result
 
         # if validation_result!="":
         #     validation_result_data={}
@@ -154,23 +162,12 @@ class TermTypeUpdate(MethodResource, Resource):
         if decoded_data != 'No record available for this term type id':
             if decoded_data['termTypeId'] == term_type_id:
 
-                # shacl validation
-                validation_data = [{
-                    'validation': 'termtypes',
-                    'typeId': term_type_id,
-                    'name': data['Name'],
-                    'description': data['Description'],
-                }]
-
-                print(f"validation data= {validation_data}")
-                # send data to validator and receive result
-                validator_url = "http://138.232.18.138:8080/RestDemo/validation"
-                r = requests.post(validator_url, json=validation_data)
-                validation_result = r.text
-                # print(validation_result)
-
-                if validation_result != "":
-                    return jsonify({"validation_error":validation_result})
+                validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="termtypes",
+                                                                                               typeid=term_type_id,
+                                                                                               name=decoded_data['Name'],
+                                                                                               desc=decoded_data['Description'])
+                if 'sh:Violation' in validation_result['term_types_violoations']:
+                    return validation_result['term_types_violoations']
 
                 validated_data = schema_serializer.load(data)
                 av = TermTypeValidation()

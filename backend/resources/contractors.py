@@ -3,6 +3,7 @@ import requests
 from core.security.RsaAesDecryption import RsaAesDecrypt
 from resources.imports import *
 from resources.schemas import *
+from resources.validation_shacl_insert_update import ValidationShaclInsertUpdate
 
 
 class ContractorUpdate(MethodResource, Resource):
@@ -20,30 +21,49 @@ class ContractorUpdate(MethodResource, Resource):
         my_json = result.data.decode('utf8')
         decoded_data = json.loads(my_json)
         if len(decoded_data) > 0:
-            # shacl validation
-            validation_data = [{
-                'validation': 'contractor',
-                'contractorId': contractor_id,
-                'companyId': data['CompanyId'],
-                'country': data['Country'],
-                'createDate': data['CreateDate'],
-                'email': data['Email'],
-                'name': data['Name'],
-                'address': data['Address'],
-                'phone': data['Phone'],
-                'role': data['Role'],
-                'territory': data['Territory'],
-                'vat': data['Vat'],
-            }]
+            # # shacl validation
+            # validation_data = [{
+            #     'validation': 'contractor',
+            #     'contractorId': contractor_id,
+            #     'companyId': data['CompanyId'],
+            #     'country': data['Country'],
+            #     'createDate': data['CreateDate'],
+            #     'email': data['Email'],
+            #     'name': data['Name'],
+            #     'address': data['Address'],
+            #     'phone': data['Phone'],
+            #     'role': data['Role'],
+            #     'territory': data['Territory'],
+            #     'vat': data['Vat'],
+            # }]
+            #
+            # print(f"validation data= {validation_data}")
+            # # send data to validator and receive result
+            # validator_url = "http://138.232.18.138:8080/RestDemo/validation"
+            # r = requests.post(validator_url, json=validation_data)
+            # validation_result = r.text
+            #
+            # if validation_result != "":
+            #     return jsonify({'validation_error':validation_result})
+            validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="contractor",
+                                                                                           contractorid=contractor_id,
+                                                                                           compid=decoded_data['CompanyId'],
+                                                                                           name=decoded_data['Name'],
+                                                                                           email=decoded_data['Email'],
+                                                                                           phone=decoded_data['Phone'],
+                                                                                           createdate=decoded_data[
+                                                                                               'CreateDate'],
+                                                                                           country=decoded_data['Country'],
+                                                                                           territory=decoded_data['Territory'],
+                                                                                           address=decoded_data['Address'],
+                                                                                           vat=decoded_data['Vat'],
+                                                                                           role=decoded_data['Role'],
+                                                                                           )
 
-            print(f"validation data= {validation_data}")
-            # send data to validator and receive result
-            validator_url = "http://138.232.18.138:8080/RestDemo/validation"
-            r = requests.post(validator_url, json=validation_data)
-            validation_result = r.text
+            # print(validation_result['contractor_violoations'])
 
-            if validation_result != "":
-                return jsonify({'validation_error':validation_result})
+            if 'sh:Violation' in validation_result['contractor_violoations']:
+                return validation_result['contractor_violoations']
 
             validated_data = schema_serializer.load(data)
             av = ContractorValidation()
@@ -87,13 +107,13 @@ class ContractorById(MethodResource, Resource):
 
             data = {
                 'contractorId': res[0]['contractorId']['value'],
-                'name': name,#res[0]['name']['value'],
-                'phone': phone,#res[0]['phone']['value'],
-                'email': email,#res[0]['email']['value'],
-                'country': country,#res[0]['country']['value'],
-                'territory': territory,#res[0]['territory']['value'],
-                'address': address,#res[0]['address']['value'],
-                'vat': vat,#res[0]['vat']['value'],
+                'name': name,  # res[0]['name']['value'],
+                'phone': phone,  # res[0]['phone']['value'],
+                'email': email,  # res[0]['email']['value'],
+                'country': country,  # res[0]['country']['value'],
+                'territory': territory,  # res[0]['territory']['value'],
+                'address': address,  # res[0]['address']['value'],
+                'vat': vat,  # res[0]['vat']['value'],
                 'companyId': res[0]['companyId']['value'],
                 'createDate': res[0]['createDate']['value'],
                 'role': res[0]['role']['value'][45:],
@@ -113,31 +133,31 @@ class ContractorCreate(MethodResource, Resource):
         uuidOne = uuid.uuid1()
         contractor_id = "c_" + str(uuidOne)
 
-        # shacl validation
-        validation_data= [{
-                'validation':'contractor',
-                'contractorId':contractor_id,
-                'companyId': data['CompanyId'],
-                'country': data['Country'],
-                'createDate': data['CreateDate'],
-                'email': data['Email'],
-                'name': data['Name'],
-                'address': data['Address'],
-                'phone': data['Phone'],
-                'role': data['Role'],
-                'territory': data['Territory'],
-                'vat': data['Vat'],
-            }]
-
-        print(f"validation data= {validation_data}")
-        # send data to validator and receive result
-        validator_url = "http://138.232.18.138:8080/RestDemo/validation"
-        r = requests.post(validator_url, json=validation_data)
-        validation_result = r.text
-        # print(validation_result)
-
-        if validation_result!="":
-            return  validation_result
+        # # shacl validation
+        # validation_data= [{
+        #         'validation':'contractor',
+        #         'contractorId':contractor_id,
+        #         'companyId': data['CompanyId'],
+        #         'country': data['Country'],
+        #         'createDate': data['CreateDate'],
+        #         'email': data['Email'],
+        #         'name': data['Name'],
+        #         'address': data['Address'],
+        #         'phone': data['Phone'],
+        #         'role': data['Role'],
+        #         'territory': data['Territory'],
+        #         'vat': data['Vat'],
+        #     }]
+        #
+        # print(f"validation data= {validation_data}")
+        # # send data to validator and receive result
+        # validator_url = "http://138.232.18.138:8080/RestDemo/validation"
+        # r = requests.post(validator_url, json=validation_data)
+        # validation_result = r.text
+        # # print(validation_result)
+        #
+        # if validation_result!="":
+        #     return  validation_result
 
         # if validation_result!="":
         #     validation_result_data={}
@@ -146,6 +166,25 @@ class ContractorCreate(MethodResource, Resource):
         #     if 'description' in validation_result:
         #         validation_result_data['description']='check description field'
         #     return validation_result_data
+
+        validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="contractor",
+                                                                                       contractorid=contractor_id,
+                                                                                       compid=data['CompanyId'],
+                                                                                       name=data['Name'],
+                                                                                       email=data['Email'],
+                                                                                       phone=data['Phone'],
+                                                                                       createdate=data['CreateDate'],
+                                                                                       country=data['Country'],
+                                                                                       territory=data['Territory'],
+                                                                                       address=data['Address'],
+                                                                                       vat=data['Vat'],
+                                                                                       role=data['Role'],
+                                                                                       )
+
+        # print(validation_result['contractor_violoations'])
+
+        if 'sh:Violation' in validation_result['contractor_violoations']:
+            return validation_result['contractor_violoations']
 
         validated_data = schema_serializer.load(data)
         av = ContractorValidation()
@@ -216,13 +255,13 @@ class GetContractors(MethodResource, Resource):
 
                 data = {
                     'contractorId': r['contractorId']['value'],
-                    'name': name,#r['name']['value'],
-                    'phone': phone,#r['phone']['value'],
-                    'email': email,#r['email']['value'],
-                    'country': country,#r['country']['value'],
-                    'territory': territory,#r['territory']['value'],
-                    'address': address,#r['address']['value'],
-                    'vat': vat,#r['vat']['value'],
+                    'name': name,  # r['name']['value'],
+                    'phone': phone,  # r['phone']['value'],
+                    'email': email,  # r['email']['value'],
+                    'country': country,  # r['country']['value'],
+                    'territory': territory,  # r['territory']['value'],
+                    'address': address,  # r['address']['value'],
+                    'vat': vat,  # r['vat']['value'],
                     'companyId': r['companyId']['value'],
                     'createDate': r['createDate']['value'],
                     'role': r['role']['value'][45:],

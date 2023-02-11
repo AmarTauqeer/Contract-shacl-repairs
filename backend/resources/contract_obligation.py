@@ -6,6 +6,7 @@ import requests
 from core.security.RsaAesDecryption import RsaAesDecrypt
 from resources.imports import *
 from resources.schemas import *
+from resources.validation_shacl_insert_update import ValidationShaclInsertUpdate
 
 
 class GetObligations(MethodResource, Resource):
@@ -150,8 +151,25 @@ class ObligationCreate(MethodResource, Resource):
         data = request.get_json(force=True)
         print(data)
         uuidOne = uuid.uuid1()
-
         obligation_id = "ob_" + str(uuidOne)
+
+        validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="obligation",
+                                                                                       oblid=obligation_id,
+                                                                                       contractorid=data[
+                                                                                           'ContractorId'],
+                                                                                       desc=data['Description'],
+                                                                                       enddate=data['EndDate'],
+                                                                                       exedate=data['ExecutionDate'],
+                                                                                       fulfillmentdate=data[
+                                                                                           'FulfillmentDate'],
+                                                                                       oblstate=data['State'],
+                                                                                       )
+
+        # print(validation_result['obligation_violoations'])
+
+        if 'sh:Violation' in validation_result['obligation_violoations']:
+            return validation_result['obligation_violoations']
+
         # contractor_id = data['ContractorId']
         # description= data['Description']
         # end_date= data['EndDate']
@@ -182,26 +200,26 @@ class ObligationCreate(MethodResource, Resource):
 
         # return 'true'
 
-        # shacl validation
-        validation_data= [{
-                'validation':'obligation',
-                'obligationId':obligation_id,
-                'contractorId': data['ContractorId'],
-                'description': data['Description'],
-                'endDate': data['EndDate'],
-                'executionDate': data['ExecutionDate'],
-                'fulfillmentDate': data['FulfillmentDate'],
-                'state': data['State'],
-            }]
-        #
-        # print(f"validation data= {validation_data}")
-        # send data to validator and receive result
-        validator_url = "http://138.232.18.138:8080/RestDemo/validation"
-        r = requests.post(validator_url, json=validation_data)
-        # print(f"validation result= {r.text}")
-        validation_result = r.text
-        if validation_result!="":
-            return  validation_result
+        # # shacl validation
+        # validation_data= [{
+        #         'validation':'obligation',
+        #         'obligationId':obligation_id,
+        #         'contractorId': data['ContractorId'],
+        #         'description': data['Description'],
+        #         'endDate': data['EndDate'],
+        #         'executionDate': data['ExecutionDate'],
+        #         'fulfillmentDate': data['FulfillmentDate'],
+        #         'state': data['State'],
+        #     }]
+        # #
+        # # print(f"validation data= {validation_data}")
+        # # send data to validator and receive result
+        # validator_url = "http://138.232.18.138:8080/RestDemo/validation"
+        # r = requests.post(validator_url, json=validation_data)
+        # # print(f"validation result= {r.text}")
+        # validation_result = r.text
+        # if validation_result!="":
+        #     return  validation_result
 
         # # if validation_result!="":
         # #     validation_result_data={}
@@ -211,6 +229,7 @@ class ObligationCreate(MethodResource, Resource):
         # #         validation_result_data['description']='check description field'
         # #     return validation_result_data
         # return validation_result
+
         validated_data = schema_serializer.load(data)
         av = ObligationValidation()
         response = av.post_data(validated_data, type="insert", obligation_id=obligation_id)
@@ -278,6 +297,23 @@ class ContractObligationUpdate(MethodResource, Resource):
             # if validation_result != "":
             #     return validation_result
             # return validation_result
+            validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="obligation",
+                                                                                           oblid=obligation_id,
+                                                                                           contractorid=decoded_data[
+                                                                                               'ContractorId'],
+                                                                                           desc=decoded_data['Description'],
+                                                                                           enddate=decoded_data['EndDate'],
+                                                                                           exedate=decoded_data[
+                                                                                               'ExecutionDate'],
+                                                                                           fulfillmentdate=decoded_data[
+                                                                                               'FulfillmentDate'],
+                                                                                           oblstate=decoded_data['State'],
+                                                                                           )
+
+            # print(validation_result['obligation_violoations'])
+
+            if 'sh:Violation' in validation_result['obligation_violoations']:
+                return validation_result['obligation_violoations']
             validated_data = schema_serializer.load(data)
             av = ObligationValidation()
             response = av.post_data(validated_data, type="update")

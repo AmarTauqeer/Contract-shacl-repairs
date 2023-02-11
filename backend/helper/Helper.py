@@ -1,5 +1,5 @@
 import json
-from SPARQLWrapper import JSON
+from SPARQLWrapper import JSON, TURTLE
 
 
 class HelperContract:
@@ -160,7 +160,7 @@ class HelperContract:
 
     def select_query_gdb(self, purpose=None, dataRequester=None, additionalData=None, contractID=None,
                          contractRequester=None, contractProvider=None, contractorID=None, termID=None,
-                         obligationID=None, termTypeID=None, signatureID=None, companyID=None):
+                         obligationID=None, termTypeID=None, signatureID=None, companyID=None, turleformat=False):
 
         sparql_inits = self.init_sparql(
             self.HOST_URI, self.get_username(), self.get_password())
@@ -175,7 +175,13 @@ class HelperContract:
         else:
             sparql_inits.setQuery(self.function_map(
                 which_query_return["map"])())
+        if not turleformat:
 
-        sparql_inits.setReturnFormat(JSON)
-        results = sparql_inits.query().convert()
-        return json.dumps(results)
+            sparql_inits.setReturnFormat(JSON)
+            results = sparql_inits.query().convert()
+            return json.dumps(results)
+        else:
+
+            sparql_inits.setReturnFormat(TURTLE)
+            results = sparql_inits.query().convert()
+            return results

@@ -2,6 +2,8 @@ import requests
 
 from resources.imports import *
 from resources.schemas import *
+from resources.validation_shacl_insert_update import ValidationShaclInsertUpdate
+
 
 class CompanyUpdate(MethodResource, Resource):
     @doc(description='Company', tags=['Company'])
@@ -18,29 +20,47 @@ class CompanyUpdate(MethodResource, Resource):
         my_json = result.data.decode('utf8')
         decoded_data = json.loads(my_json)
         if len(decoded_data) > 0:
-            # shacl validation
-            validation_data = [{
-                'validation': 'company',
-                'companyId': company_id,
-                'country': data['Country'],
-                'createDate': data['CreateDate'],
-                'email': data['Email'],
-                'name': data['Name'],
-                'address': data['Address'],
-                'phone': data['Phone'],
-                'territory': data['Territory'],
-                'vat': data['Vat'],
-            }]
+            # # shacl validation
+            # validation_data = [{
+            #     'validation': 'company',
+            #     'companyId': company_id,
+            #     'country': data['Country'],
+            #     'createDate': data['CreateDate'],
+            #     'email': data['Email'],
+            #     'name': data['Name'],
+            #     'address': data['Address'],
+            #     'phone': data['Phone'],
+            #     'territory': data['Territory'],
+            #     'vat': data['Vat'],
+            # }]
+            #
+            # print(f"validation data= {validation_data}")
+            # # send data to validator and receive result
+            # validator_url = "http://138.232.18.138:8080/RestDemo/validation"
+            # r = requests.post(validator_url, json=validation_data)
+            # validation_result = r.text
+            # # print(validation_result)
+            #
+            # if validation_result != "":
+            #     return jsonify({'validation_error':validation_result})
 
-            print(f"validation data= {validation_data}")
-            # send data to validator and receive result
-            validator_url = "http://138.232.18.138:8080/RestDemo/validation"
-            r = requests.post(validator_url, json=validation_data)
-            validation_result = r.text
-            # print(validation_result)
+            validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="company",
+                                                                                           compid=company_id,
+                                                                                           name=decoded_data['Name'],
+                                                                                           email=decoded_data['Email'],
+                                                                                           phone=decoded_data['Phone'],
+                                                                                           createdate=decoded_data[
+                                                                                               'CreateDate'],
+                                                                                           country=decoded_data['Country'],
+                                                                                           territory=decoded_data['Territory'],
+                                                                                           address=decoded_data['Address'],
+                                                                                           vat=decoded_data['Vat'],
+                                                                                           )
 
-            if validation_result != "":
-                return jsonify({'validation_error':validation_result})
+            # print(validation_result['contractor_violoations'])
+
+            if 'sh:Violation' in validation_result['company_violoations']:
+                return validation_result['company_violoations']
             validated_data = schema_serializer.load(data)
 
             av = CompanyValidation()
@@ -90,30 +110,46 @@ class CompanyCreate(MethodResource, Resource):
         data = request.get_json(force=True)
         uuidOne = uuid.uuid1()
         company_id = "cm_" + str(uuidOne)
+        validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="company",
+                                                                                       compid=company_id,
+                                                                                       name=data['Name'],
+                                                                                       email=data['Email'],
+                                                                                       phone=data['Phone'],
+                                                                                       createdate=data['CreateDate'],
+                                                                                       country=data['Country'],
+                                                                                       territory=data['Territory'],
+                                                                                       address=data['Address'],
+                                                                                       vat=data['Vat'],
+                                                                                       )
 
-        # shacl validation
-        validation_data= [{
-                'validation':'company',
-                'companyId':company_id,
-                'country': data['Country'],
-                'createDate': data['CreateDate'],
-                'email': data['Email'],
-                'name': data['Name'],
-                'address': data['Address'],
-                'phone': data['Phone'],
-                'territory': data['Territory'],
-                'vat': data['Vat'],
-            }]
+        # print(validation_result['contractor_violoations'])
 
-        print(f"validation data= {validation_data}")
-        # send data to validator and receive result
-        validator_url = "http://138.232.18.138:8080/RestDemo/validation"
-        r = requests.post(validator_url, json=validation_data)
-        validation_result = r.text
-        # print(validation_result)
+        if 'sh:Violation' in validation_result['company_violoations']:
+            return validation_result['company_violoations']
 
-        if validation_result!="":
-            return  validation_result
+        # # shacl validation
+        # validation_data= [{
+        #         'validation':'company',
+        #         'companyId':company_id,
+        #         'country': data['Country'],
+        #         'createDate': data['CreateDate'],
+        #         'email': data['Email'],
+        #         'name': data['Name'],
+        #         'address': data['Address'],
+        #         'phone': data['Phone'],
+        #         'territory': data['Territory'],
+        #         'vat': data['Vat'],
+        #     }]
+        #
+        # print(f"validation data= {validation_data}")
+        # # send data to validator and receive result
+        # validator_url = "http://138.232.18.138:8080/RestDemo/validation"
+        # r = requests.post(validator_url, json=validation_data)
+        # validation_result = r.text
+        # # print(validation_result)
+        #
+        # if validation_result!="":
+        #     return  validation_result
         # if validation_result!="":
         #     validation_result_data={}
         #     if "hasName" in validation_result:

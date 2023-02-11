@@ -112,12 +112,12 @@ data_graph = '''
 ex:Kate
   rdf:type exOnt:Person ;
   exOnt:firstName "Kate" ;
-  exOnt:lastName "Jones" ;
+  exOnt:lastName "Jonsdfdsfdsfdsfdsfdsfsfdsfdsfses" ;
 .
 ex:Jenny
   rdf:type exOnt:Administrator ;
   exOnt:firstName "Jennifer" ;
-  exOnt:lastName "Wolfesesdfdsfsdfsdfsdflegelst" ;
+  exOnt:lastName "Wolfeseinhausenegelst" ;
 .
 '''
 

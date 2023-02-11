@@ -1,0 +1,126 @@
+@prefix base: <http://ontologies.atb-bremen.de/smashHitCore#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix fibo-fbc-fe-fse: <https://spec.edmcouncil.org/fibo/ontology/FBC/FunctionalEntities/FinancialServicesEntities/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix dpv-gdpr: <http://www.w3.org/ns/dpv-gdpr#> .
+@prefix fibo-fnd-agr-ctr: <https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix gconsent: <https://w3id.org/GConsent#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rdf4j: <http://rdf4j.org/schema/rdf4j#> .
+@prefix fibo-der-dc-dma: <https://spec.edmcouncil.org/fibo/ontology/DER/DerivativesContracts/DerivativesMasterAgreements/> .
+@prefix fibo-fnd-trext-reatr: <https://spec.edmcouncil.org/fibo/ontology/FND/TransactionsExt/REATransactions/> .
+@prefix gn: <http://www.geonames.org/ontology#> .
+@prefix dpv: <http://www.w3.org/ns/dpv#> .
+@prefix consent: <http://purl.org/adaptcentre/openscience/ontologies/consent#> .
+@prefix fibo-loan-loant-mloan: <https://spec.edmcouncil.org/fibo/ontology/LOAN/LoanTypes/MortgageLoans/> .
+@prefix LCC: <https://www.omg.org/spec/LCC/Countries/CountryRepresentation/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix fibo-fnd-plc-loc: <https://spec.edmcouncil.org/fibo/ontology/FND/Places/Locations/> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix fibo-fbc-dae-dbt: <https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix ex: <http://example.com/ns#> .
+
+schema:CCV1stScenarioShape a sh:NodeShape ;
+ sh:targetClass base:CCV1st;
+ sh:sparql [
+ a sh:SPARQLConstraint ;
+ sh:message "Violation occure the end date already passed." ;
+ sh:select '''
+    SELECT $this
+    WHERE {
+     $this base:hasStates ?state .
+     $this base:hasEndDate ?edate .
+     $this base:currentDateTime ?cdate .
+     $this base:hasContractStatus ?cstatus .
+    FILTER ((?state=base:statePending) && (?cdate > ?edate) && (?cstatus IN (base:statusCreated, base:statusUpdated, base:statusPending)))
+    }
+    ''' ;
+ ] .
+schema:CCVSecondScenarioShape a sh:NodeShape ;
+ sh:targetClass base:CCVSecond;
+ sh:sparql [
+ a sh:SPARQLConstraint ;
+ sh:message "Violation: Consent has been expired already." ;
+ sh:select '''
+    SELECT $this
+    WHERE {
+     $this base:hasEndDate ?endDate .
+     $this base:hasContractStatus ?contractStatus .
+     $this base:hasStates ?state .
+     $this base:consentState ?consentState .
+     FILTER ((?consentState IN ("Invalid","Expired")) && (?contractStatus IN (base:statusCreated, base:statusUpdated, base:statusPending)))
+    }
+    ''' ;
+ ] .
+
+schema:CCVthirdScenarioIfPartShape a sh:NodeShape ;
+ sh:targetClass base:CCVThirdIf;
+ sh:sparql [
+ a sh:SPARQLConstraint ;
+ sh:message "Violation: Consent has been expired already." ;
+ sh:select '''
+    SELECT $this
+    WHERE {
+     $this base:hasEndDate ?endDate .
+     $this base:hasContractStatus ?contractStatus .
+     $this base:hasStates ?state .
+     $this base:consentState ?consentState .
+     FILTER ((?consentState IN ("Invalid","Expired")) && (?contractStatus IN (base:statusCreated, base:statusUpdated, base:statusPending)))
+    }
+    ''' ;
+ ] .
+schema:CCVThirdScenarioElsePartShape a sh:NodeShape ;
+ sh:targetClass base:CCVThirdElse;
+ sh:sparql [
+ a sh:SPARQLConstraint ;
+ sh:message "Violation: Contract end date has been passed." ;
+ sh:select '''
+    SELECT $this
+    WHERE {
+     $this base:hasStates ?state .
+     $this base:hasEndDate ?edate .
+     $this base:currentDateTime ?cdate .
+     $this base:hasContractStatus ?cstatus .
+    FILTER ((?state=base:statePending) && (?cdate > ?edate) && (?cstatus IN (base:statusCreated, base:statusUpdated, base:statusPending)))
+    }
+    ''' ;
+ ] .
+schema:CCVFourthScenarioShape a sh:NodeShape ;
+ sh:targetClass base:CCVFourth;
+ sh:sparql [
+ a sh:SPARQLConstraint ;
+ sh:message "Violation: Contract end date has been passed." ;
+ sh:select '''
+    SELECT $this
+    WHERE {
+     $this base:hasStates ?state .
+     $this base:hasEndDate ?edate .
+     $this base:currentDateTime ?cdate .
+     $this base:hasContractStatus ?cstatus .
+    FILTER ((?state=base:statePending) && (?cdate > ?edate) && (?cstatus IN (base:statusCreated, base:statusUpdated, base:statusPending)))
+    }
+    ''' ;
+ ] .
+schema:CCVFifthScenarioShape a sh:NodeShape ;
+ sh:targetClass base:CCVFifth;
+ sh:sparql [
+ a sh:SPARQLConstraint ;
+ sh:message "Violation: Consent has been expired but contract still running." ;
+ sh:select '''
+    SELECT $this
+    WHERE {
+     $this base:hasContractStatus ?contractStatus .
+     $this base:consentState ?consentState .
+     FILTER ((?consentState IN ("Invalid","Expired")) && (?contractStatus IN (base:statusCreated, base:statusUpdated, base:statusPending)))
+    }
+    ''' ;
+ ] .

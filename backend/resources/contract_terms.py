@@ -3,6 +3,7 @@ import requests
 from resources.contract_obligation import ObligationById, GetObligationByTermId, ObligationDeleteById
 from resources.imports import *
 from resources.schemas import *
+from resources.validation_shacl_insert_update import ValidationShaclInsertUpdate
 
 
 class GetTerms(MethodResource, Resource):
@@ -120,24 +121,34 @@ class TermCreate(MethodResource, Resource):
         data = request.get_json(force=True)
         uuidOne = uuid.uuid1()
         term_id = "term_" + str(uuidOne)
-        # shacl validation
-        validation_data= [{
-                'validation':'term',
-                'termId':term_id,
-                'termTypeId': data['TermTypeId'],
-                'createDate': data['CreateDate'],
-                'description': data['Description'],
-            }]
 
-        print(f"validation data= {validation_data}")
-        # send data to validator and receive result
-        validator_url = "http://138.232.18.138:8080/RestDemo/validation"
-        r = requests.post(validator_url, json=validation_data)
-        validation_result = r.text
-        # print(validation_result)
+        validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="term",
+                                                                                       typeid=data['TermTypeId'],
+                                                                                       createDate=data['CreateDate'],
+                                                                                       desc=data['Description'])
 
-        if validation_result!="":
-            return  validation_result
+        # print(validation_result['term_violoations'])
+
+        if 'sh:Violation' in validation_result['term_violoations']:
+            return validation_result['term_violoations']
+        # # shacl validation
+        # validation_data= [{
+        #         'validation':'term',
+        #         'termId':term_id,
+        #         'termTypeId': data['TermTypeId'],
+        #         'createDate': data['CreateDate'],
+        #         'description': data['Description'],
+        #     }]
+        #
+        # print(f"validation data= {validation_data}")
+        # # send data to validator and receive result
+        # validator_url = "http://138.232.18.138:8080/RestDemo/validation"
+        # r = requests.post(validator_url, json=validation_data)
+        # validation_result = r.text
+        # # print(validation_result)
+        #
+        # if validation_result!="":
+        #     return  validation_result
         # if validation_result!="":
         #     validation_result_data={}
         #     if "hasName" in validation_result:
@@ -174,24 +185,36 @@ class TermUpdate(MethodResource, Resource):
         decoded_data = json.loads(my_json)
         if decoded_data != 'No record available for this term id':
             if decoded_data['termId'] == term_id:
-                # shacl validation
-                validation_data = [{
-                    'validation': 'term',
-                    'termId': term_id,
-                    'termTypeId': data['TermTypeId'],
-                    'createDate': data['CreateDate'],
-                    'description': data['Description'],
-                }]
+                # # shacl validation
+                # validation_data = [{
+                #     'validation': 'term',
+                #     'termId': term_id,
+                #     'termTypeId': data['TermTypeId'],
+                #     'createDate': data['CreateDate'],
+                #     'description': data['Description'],
+                # }]
+                #
+                # print(f"validation data= {validation_data}")
+                # # send data to validator and receive result
+                # validator_url = "http://138.232.18.138:8080/RestDemo/validation"
+                # r = requests.post(validator_url, json=validation_data)
+                # validation_result = r.text
+                # # print(validation_result)
+                #
+                # if validation_result != "":
+                #     return jsonify({'validation_error':validation_result})
 
-                print(f"validation data= {validation_data}")
-                # send data to validator and receive result
-                validator_url = "http://138.232.18.138:8080/RestDemo/validation"
-                r = requests.post(validator_url, json=validation_data)
-                validation_result = r.text
-                # print(validation_result)
+                validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="term",
+                                                                                               typeid=decoded_data[
+                                                                                                   'TermTypeId'],
+                                                                                               createDate=decoded_data[
+                                                                                                   'CreateDate'],
+                                                                                               desc=decoded_data['Description'])
 
-                if validation_result != "":
-                    return jsonify({'validation_error':validation_result})
+                # print(validation_result['term_violoations'])
+
+                if 'sh:Violation' in validation_result['term_violoations']:
+                    return validation_result['term_violoations']
 
                 validated_data = schema_serializer.load(data)
                 av = TermValidation()
@@ -256,6 +279,7 @@ class TermByObligationId(MethodResource, Resource):
         if len(res) > 0:
             data = {
                 'termId': res[0]['termId']['value'],
+                'termTypeId': res[0]['termTypeId']['value'],
                 'description': res[0]['description']['value'],
                 'createDate': res[0]['createDate']['value']
             }

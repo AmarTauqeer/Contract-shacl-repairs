@@ -252,6 +252,7 @@ class QueryEngine(Credentials, SPARQL, HelperContract):
                 WHERE {{
                 ?Term rdf:type :TermsAndConditions;
                 :termID ?termId;
+                :hasTermTypes ?termTypeId;
                 :hasObligations ?obligationId;
                  dct:description ?description;
                 :hasCreationDate ?createDate .

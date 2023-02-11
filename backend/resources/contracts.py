@@ -6,6 +6,7 @@ from resources.contract_signatures import GetContractSignatures, SignatureDelete
 from resources.contract_terms import GetContractTerms, TermDeleteById
 from resources.imports import *
 from resources.schemas import *
+from resources.validation_shacl_insert_update import ValidationShaclInsertUpdate
 
 
 class Contracts(MethodResource, Resource):
@@ -61,8 +62,8 @@ class Contracts(MethodResource, Resource):
                     # 'obligations': obligation_array,
                     'signatures': signature_array
                 }
-
-                consentId = d['consentId']['value'][45:]
+                # print(f"consent id ={d['consentId']['value']}")
+                consentId = d['consentId']['value']
 
                 category_data = d['contractCategory']['value'][45:]
                 if category_data != 'categoryBusinessToConsumer':
@@ -216,7 +217,7 @@ class ContractByTermId(MethodResource, Resource):
         query = QueryEngine()
         response = json.loads(
             query.select_query_gdb(purpose=None, dataRequester=None, additionalData="contractBytermID", contractID=None,
-                                   contractRequester=None, contractProvider=None, contractorID=None,termID=termID))
+                                   contractRequester=None, contractProvider=None, contractorID=None, termID=termID))
 
         data = response["results"]['bindings']
         if len(data) != 0:
@@ -225,7 +226,7 @@ class ContractByTermId(MethodResource, Resource):
             signature_array = []
 
             for d in data:
-                contract_id=d['contractId']['value']
+                contract_id = d['contractId']['value']
                 # get contractors
                 contractors = GetContractContractors.get(self, contract_id)
                 contractors = contractors.json
@@ -306,29 +307,60 @@ class ContractUpdate(MethodResource, Resource):
                 status_value = decoded_data['contractStatus']
                 signed = re.findall(r"Signed", status_value)
                 if len(signed) == 0:
-                    # shacl validation
-                    validation_data = [{
-                        'validation': 'contract',
-                        'contractId': contract_id,
-                        'contractType': data['ContractType'],
-                        'considerationValue': data['Value'],
-                        'contractCategory': data['ContractCategory'],
-                        'contractStatus': data['ContractStatus'],
-                        'purpose': data['Purpose'],
-                        'effectiveDate': data['EffectiveDate'],
-                        'endDate': data['EndDate'],
-                        'executionDate': data['ExecutionDate'],
-                    }]
+                    validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self,
+                                                                                                   case="contract",
+                                                                                                   contid=contract_id,
+                                                                                                   conttype=
+                                                                                                   decoded_data[
+                                                                                                       'ContractType'],
+                                                                                                   contcategory=
+                                                                                                   decoded_data[
+                                                                                                       'ContractCategory'],
+                                                                                                   contstatus=
+                                                                                                   decoded_data[
+                                                                                                       'ContractStatus'],
+                                                                                                   consValue=
+                                                                                                   decoded_data[
+                                                                                                       'ConsiderationValue'],
+                                                                                                   effecdate=
+                                                                                                   decoded_data[
+                                                                                                       'EffectiveDate'],
+                                                                                                   exedate=decoded_data[
+                                                                                                       'ExecutionDate'],
+                                                                                                   enddate=decoded_data[
+                                                                                                       'EndDate'],
+                                                                                                   purpose=decoded_data[
+                                                                                                       'Purpose'],
+                                                                                                   )
 
-                    print(f"validation data= {validation_data}")
-                    # send data to validator and receive result
-                    validator_url = "http://138.232.18.138:8080/RestDemo/validation"
-                    r = requests.post(validator_url, json=validation_data)
-                    validation_result = r.text
-                    print(validation_result)
+                    # print(validation_result['obligation_violoations'])
 
-                    if validation_result != "":
-                        return validation_result
+                    if 'sh:Violation' in validation_result['contract_violoations']:
+                        return validation_result['contract_violoations']
+                    # # shacl validation
+                    # validation_data = [{
+                    #     'validation': 'contract',
+                    #     'contractId': contract_id,
+                    #     'contractType': data['ContractType'],
+                    #     'considerationValue': data['Value'],
+                    #     'contractCategory': data['ContractCategory'],
+                    #     'contractStatus': data['ContractStatus'],
+                    #     'purpose': data['Purpose'],
+                    #     'effectiveDate': data['EffectiveDate'],
+                    #     'endDate': data['EndDate'],
+                    #     'executionDate': data['ExecutionDate'],
+                    # }]
+                    #
+                    # print(f"validation data= {validation_data}")
+                    # # send data to validator and receive result
+                    # validator_url = "http://localhost:8080/RestDemo/validation"
+                    # # validator_url = "http://138.232.18.138:8080/RestDemo/validation"
+                    # r = requests.post(validator_url, json=validation_data)
+                    # validation_result = r.text
+                    # print(validation_result)
+                    #
+                    # if validation_result != "":
+                    #     return validation_result
                     validated_data = schema_serializer.load(data)
                     cv = ContractValidation()
                     response = cv.post_data(validated_data, type="update", contract_id=None)
@@ -357,29 +389,50 @@ class ContractCreate(MethodResource, Resource):
         else:
             contract_id = "contb2c_" + str(uuidOne)
 
-        # shacl validation
-        validation_data= [{
-                'validation':'contract',
-                'contractId':contract_id,
-                'contractType': data['ContractType'],
-                'considerationValue': data['ConsiderationValue'],
-                'contractCategory': data['ContractCategory'],
-                'contractStatus': data['ContractStatus'],
-                'purpose': data['Purpose'],
-                'effectiveDate': data['EffectiveDate'],
-                'endDate': data['EndDate'],
-                'executionDate': data['ExecutionDate'],
-            }]
+        validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="contract",
+                                                                                       contid=contract_id,
+                                                                                       conttype=data[
+                                                                                           'ContractType'],
+                                                                                       contcategory=data[
+                                                                                           'ContractCategory'],
+                                                                                       contstatus=data[
+                                                                                           'ContractStatus'],
+                                                                                       consValue=data[
+                                                                                           'ConsiderationValue'],
+                                                                                       effecdate=data['EffectiveDate'],
+                                                                                       exedate=data['ExecutionDate'],
+                                                                                       enddate=data['EndDate'],
+                                                                                       purpose=data['Purpose'],
+                                                                                       )
 
-        # print(f"validation data= {validation_data}")
-        # send data to validator and receive result
-        validator_url = "http://138.232.18.138:8080/RestDemo/validation"
-        r = requests.post(validator_url, json=validation_data)
-        validation_result = r.text
-        # print(validation_result)
+        # print(validation_result['obligation_violoations'])
 
-        if validation_result!="":
-            return  validation_result
+        if 'sh:Violation' in validation_result['contract_violoations']:
+            return validation_result['contract_violoations']
+        # # shacl validation
+        # validation_data= [{
+        #         'validation':'contract',
+        #         'contractId':contract_id,
+        #         'contractType': data['ContractType'],
+        #         'considerationValue': data['ConsiderationValue'],
+        #         'contractCategory': data['ContractCategory'],
+        #         'contractStatus': data['ContractStatus'],
+        #         'purpose': data['Purpose'],
+        #         'effectiveDate': data['EffectiveDate'],
+        #         'endDate': data['EndDate'],
+        #         'executionDate': data['ExecutionDate'],
+        #     }]
+        #
+        # # print(f"validation data= {validation_data}")
+        # # send data to validator and receive result
+        # validator_url = "http://localhost:8080/RestDemo/validation"
+        # # validator_url = "http://138.232.18.138:8080/RestDemo/validation"
+        # r = requests.post(validator_url, json=validation_data)
+        # validation_result = r.text
+        # # print(validation_result)
+        #
+        # if validation_result!="":
+        #     return  validation_result
         # if validation_result!="":
         #     validation_result_data={}
         #     if "hasName" in validation_result:
@@ -387,6 +440,7 @@ class ContractCreate(MethodResource, Resource):
         #     if 'description' in validation_result:
         #         validation_result_data['description']='check description field'
         #     return validation_result_data
+
         validated_data = schema_serializer.load(data)
         cv = ContractValidation()
         response = cv.post_data(validated_data, type="insert", contract_id=contract_id)
