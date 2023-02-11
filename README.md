@@ -54,7 +54,7 @@ python -m flask run
 
 - Amar Tauqeer
   amar.tauqeer@sti2.at, amar.tauqeer@gmail.com
-- Web: "https://amartauqeer.github.io/"
+- Web: "https://amartauqeer.github.io/amar-tauqeer-portfolio/"
 - LinkedIn: "https://www.linkedin.com/in/amar-tauqeer/"
 
 ## Project
