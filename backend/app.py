@@ -257,7 +257,7 @@ current_date = date.today()
 
 
 def compliance():
-    CONTRACT_URL = "https://actool.contract.sti2.at/contract/compliance/"
+    CONTRACT_URL = "https://actool.contract-shacl.sti2.at/contract/compliance/"
     # CONTRACT_URL = "http://172.25.0.81:5000/contract/compliance/"
     data = requests.get(CONTRACT_URL)
     data = data.json()

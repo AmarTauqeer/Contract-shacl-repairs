@@ -86,9 +86,16 @@ class CCVHelper(MethodResource, Resource):
             main_directory = f"{rootpath.detect()}/resources/data-graphs-files"
             file_name = '/ccv_fourth_scenario.ttl'
             complete_path = main_directory + file_name
+
             with open(complete_path, 'w') as fp:
                 fp.write(data_graph)
                 pass
+
+            # file_name_complete = '/ccv-data-graphs.ttl'
+            # complete_path_for_all_data = main_directory + file_name_complete
+            # with open(complete_path_for_all_data, 'a+') as fp:
+            #     fp.write(data_graph)
+            #     pass
             # print(os.path.isfile(complete_path))
             # print(b2c_data)
 
@@ -114,11 +121,10 @@ class CCVHelper(MethodResource, Resource):
                             fibo-fnd-agr-ctr:hasEffectiveDate "{7}"^^xsd:dateTime;
                             fibo-fnd-agr-ctr:hasExecutionDate "{8}"^^xsd:dateTime;
                             base:hasStates base:{9};
-                            base:consentState "{10}";
+                            base:hasConsentState "{10}";
                             base:currentDateTime "{11}"^^xsd:dateTime .
                             """.format(prefix(), contid, conttype, purpose, contcategory, contstatus,
-                                       enddate,
-                                       effecdate, exedate, oblstate, consstate, currentdate)
+                                       enddate, effecdate, exedate, oblstate, consstate, currentdate)
 
             # print(data_graph)
             ## create data graph file for validation
@@ -128,6 +134,13 @@ class CCVHelper(MethodResource, Resource):
             with open(complete_path, 'w') as fp:
                 fp.write(data_graph)
                 pass
+
+            # file_name_complete = '/ccv-data-graphs.ttl'
+            # complete_path_for_all_data = main_directory + file_name_complete
+            # with open(complete_path_for_all_data, 'a+') as fp:
+            #     fp.write(data_graph)
+            #     pass
+
             # print(os.path.isfile(complete_path))
             # print(b2c_data)
 
@@ -150,11 +163,10 @@ class CCVHelper(MethodResource, Resource):
                             fibo-fnd-agr-ctr:hasEffectiveDate "{7}"^^xsd:dateTime;
                             fibo-fnd-agr-ctr:hasExecutionDate "{8}"^^xsd:dateTime;
                             base:hasStates base:{9};
-                            base:consentState "{10}";
+                            base:hasConsentState "{10}";
                             base:currentDateTime "{11}"^^xsd:dateTime .
                             """.format(prefix(), contid, conttype, purpose, contcategory, contstatus,
-                                       enddate,
-                                       effecdate, exedate, oblstate, consstate, currentdate)
+                                       enddate, effecdate, exedate, oblstate, consstate, currentdate)
 
             # print(data_graph)
             ## create data graph file for validation
@@ -164,6 +176,13 @@ class CCVHelper(MethodResource, Resource):
             with open(complete_path, 'w') as fp:
                 fp.write(data_graph)
                 pass
+
+            # file_name_complete = '/ccv-data-graphs.ttl'
+            # complete_path_for_all_data = main_directory + file_name_complete
+            # with open(complete_path_for_all_data, 'a+') as fp:
+            #     fp.write(data_graph)
+            #     pass
+
             # print(os.path.isfile(complete_path))
             # print(b2c_data)
 
@@ -186,7 +205,7 @@ class CCVHelper(MethodResource, Resource):
                             fibo-fnd-agr-ctr:hasEffectiveDate "{7}"^^xsd:dateTime;
                             fibo-fnd-agr-ctr:hasExecutionDate "{8}"^^xsd:dateTime ;
                             base:hasStates base:{9};
-                            base:consentState "{10}";
+                            base:hasConsentState "{10}";
                             base:currentDateTime "{11}"^^xsd:dateTime .
 
                             """.format(prefix(), contid, conttype, purpose, contcategory, contstatus,
@@ -200,6 +219,13 @@ class CCVHelper(MethodResource, Resource):
             with open(complete_path, 'w') as fp:
                 fp.write(data_graph)
                 pass
+
+            # file_name_complete = '/ccv-data-graphs.ttl'
+            # complete_path_for_all_data = main_directory + file_name_complete
+            # with open(complete_path_for_all_data, 'a+') as fp:
+            #     fp.write(data_graph)
+            #     pass
+
             # print(os.path.isfile(complete_path))
             # print(b2c_data)
 
@@ -222,10 +248,11 @@ class CCVHelper(MethodResource, Resource):
             fibo-fnd-agr-ctr:hasEffectiveDate "{7}"^^xsd:dateTime;
             fibo-fnd-agr-ctr:hasExecutionDate "{8}"^^xsd:dateTime ;
             base:hasStates base:{9};
-            base:currentDateTime "{10}"^^xsd:dateTime .
+            base:currentDateTime "{10}"^^xsd:dateTime;
+            base:hasConsentState "{11}" .
 
             """.format(prefix(), contid, conttype, purpose, contcategory, contstatus, enddate,
-                       effecdate, exedate, oblstate, currentdate)
+                       effecdate, exedate, oblstate, currentdate, consstate)
 
             # print(data_graph)
             ## create data graph file for validation
@@ -235,6 +262,13 @@ class CCVHelper(MethodResource, Resource):
             with open(complete_path, 'w') as fp:
                 fp.write(data_graph)
                 pass
+
+            # file_name_complete = '/ccv-data-graphs.ttl'
+            # complete_path_for_all_data = main_directory + file_name_complete
+            # with open(complete_path_for_all_data, 'a+') as fp:
+            #     fp.write(data_graph)
+            #     pass
+
             # print(os.path.isfile(complete_path))
             # print(b2c_data)
 
@@ -250,7 +284,7 @@ class CCVHelper(MethodResource, Resource):
             {0}
             base:{1} a base:CCVFifth;
             base:hasContractStatus base:{2};
-            base:consentStates "{3}";
+            base:hasConsentState "{3}";
             base:currentDateTime "{4}"^^xsd:dateTime .
 
             """.format(prefix(), contid, contstatus, consstate, currentdate)
@@ -263,6 +297,13 @@ class CCVHelper(MethodResource, Resource):
             with open(complete_path, 'w') as fp:
                 fp.write(data_graph)
                 pass
+
+            # file_name_complete = '/ccv-data-graphs.ttl'
+            # complete_path_for_all_data = main_directory + file_name_complete
+            # with open(complete_path_for_all_data, 'a+') as fp:
+            #     fp.write(data_graph)
+            #     pass
+
             # print(os.path.isfile(complete_path))
             # print(b2c_data)
 

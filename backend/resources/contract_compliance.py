@@ -113,7 +113,7 @@ class GetContractCompliance(MethodResource, Resource):
                                                purpose=b2b_data['purpose'], contcategory=b2b_data['contractCategory'],
                                                contstatus=b2b_contract_status, enddate=iso_date_b2b_edate,
                                                effecdate=iso_date_b2b_effdate, exedate=iso_date_b2b_exdate,
-                                               oblstate=obl_state, currentdate=current_date_time))
+                                               oblstate=obl_state, currentdate=current_date_time, consstate=consent))
 
                 # actual check to detect violation
                 if current_date_time >= date_time_obj and obl_state == 'statePending' \
@@ -243,7 +243,7 @@ class GetContractCompliance(MethodResource, Resource):
                                                purpose=b2c_data['purpose'], contcategory=b2c_data['contractCategory'],
                                                contstatus=b2c_contract_status, enddate=iso_date_b2c_edate,
                                                effecdate=iso_date_b2c_effdate, exedate=iso_date_b2c_exdate,
-                                               oblstate=obl_state, currentdate=current_date_time))
+                                               oblstate=obl_state, currentdate=current_date_time,consstate=consent))
 
                 # print(b2c_data)
                 if current_date_time >= date_time_obj and obl_state == 'statePending' \

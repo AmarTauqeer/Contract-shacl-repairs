@@ -31,6 +31,20 @@
 
 schema:CCV1stScenarioShape a sh:NodeShape ;
  sh:targetClass base:CCV1st;
+ sh:and (
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasContractCategory;
+                sh:in (base:categoryBusinessToBusiness)
+                  ]
+         ]
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasConsentState;
+                sh:in ("empty")
+                  ]
+          ]
+);
  sh:sparql [
  a sh:SPARQLConstraint ;
  sh:message "Violation occure the end date already passed." ;
@@ -47,6 +61,20 @@ schema:CCV1stScenarioShape a sh:NodeShape ;
  ] .
 schema:CCVSecondScenarioShape a sh:NodeShape ;
  sh:targetClass base:CCVSecond;
+ sh:and (
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasContractCategory;
+                sh:in (base:categoryBusinessToBusiness base:categoryBusinessToConsumer)
+                  ]
+         ]
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasConsentState;
+                sh:in ("Valid" "Invalid" "Expired")
+                  ]
+          ]
+);
  sh:sparql [
  a sh:SPARQLConstraint ;
  sh:message "Violation: Consent has been expired already." ;
@@ -56,7 +84,7 @@ schema:CCVSecondScenarioShape a sh:NodeShape ;
      $this base:hasEndDate ?endDate .
      $this base:hasContractStatus ?contractStatus .
      $this base:hasStates ?state .
-     $this base:consentState ?consentState .
+     $this base:hasConsentState ?consentState .
      FILTER ((?consentState IN ("Invalid","Expired")) && (?contractStatus IN (base:statusCreated, base:statusUpdated, base:statusPending)))
     }
     ''' ;
@@ -64,6 +92,20 @@ schema:CCVSecondScenarioShape a sh:NodeShape ;
 
 schema:CCVthirdScenarioIfPartShape a sh:NodeShape ;
  sh:targetClass base:CCVThirdIf;
+ sh:and (
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasContractCategory;
+                sh:in (base:categoryBusinessToConsumer)
+                  ]
+         ]
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasConsentState;
+                sh:in ("Valid" "Invalid" "Expired")
+                  ]
+          ]
+);
  sh:sparql [
  a sh:SPARQLConstraint ;
  sh:message "Violation: Consent has been expired already." ;
@@ -73,13 +115,27 @@ schema:CCVthirdScenarioIfPartShape a sh:NodeShape ;
      $this base:hasEndDate ?endDate .
      $this base:hasContractStatus ?contractStatus .
      $this base:hasStates ?state .
-     $this base:consentState ?consentState .
+     $this base:hasConsentState ?consentState .
      FILTER ((?consentState IN ("Invalid","Expired")) && (?contractStatus IN (base:statusCreated, base:statusUpdated, base:statusPending)))
     }
     ''' ;
  ] .
 schema:CCVThirdScenarioElsePartShape a sh:NodeShape ;
  sh:targetClass base:CCVThirdElse;
+ sh:and (
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasContractCategory;
+                sh:in (base:categoryBusinessToConsumer)
+                  ]
+         ]
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasConsentState;
+                sh:in ("Valid")
+                  ]
+          ]
+);
  sh:sparql [
  a sh:SPARQLConstraint ;
  sh:message "Violation: Contract end date has been passed." ;
@@ -96,6 +152,20 @@ schema:CCVThirdScenarioElsePartShape a sh:NodeShape ;
  ] .
 schema:CCVFourthScenarioShape a sh:NodeShape ;
  sh:targetClass base:CCVFourth;
+ sh:and (
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasContractCategory;
+                sh:in (base:categoryBusinessToConsumer)
+                  ]
+         ]
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasConsentState;
+                sh:in ("empty")
+                  ]
+          ]
+);
  sh:sparql [
  a sh:SPARQLConstraint ;
  sh:message "Violation: Contract end date has been passed." ;
@@ -112,6 +182,20 @@ schema:CCVFourthScenarioShape a sh:NodeShape ;
  ] .
 schema:CCVFifthScenarioShape a sh:NodeShape ;
  sh:targetClass base:CCVFifth;
+ sh:and (
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasContractCategory;
+                sh:in (base:categoryBusinessToConsumer)
+                  ]
+         ]
+         [a sh:NodeShape;
+          sh:property [
+                sh:path base:hasConsentState;
+                sh:in ("Valid" "Invalid" "Expired")
+                  ]
+          ]
+);
  sh:sparql [
  a sh:SPARQLConstraint ;
  sh:message "Violation: Consent has been expired but contract still running." ;
@@ -119,7 +203,7 @@ schema:CCVFifthScenarioShape a sh:NodeShape ;
     SELECT $this
     WHERE {
      $this base:hasContractStatus ?contractStatus .
-     $this base:consentState ?consentState .
+     $this base:hasConsentState ?consentState .
      FILTER ((?consentState IN ("Invalid","Expired")) && (?contractStatus IN (base:statusCreated, base:statusUpdated, base:statusPending)))
     }
     ''' ;
