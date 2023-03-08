@@ -18,6 +18,7 @@ class GetTermTypes(MethodResource, Resource):
             query.select_query_gdb(purpose=None, dataRequester=None, additionalData="termTypes", termID=None,
                                    contractRequester=None, contractProvider=None, ))
         response = response["results"]['bindings']
+
         if len(response) != 0:
             obj_dec = RsaAesDecrypt()
             term_array = []
@@ -154,11 +155,13 @@ class TermTypeUpdate(MethodResource, Resource):
     def put(self, **kwargs):
         schema_serializer = TermTypeUpdateSchema()
         data = request.get_json(force=True)
+        # print(data)
         term_type_id = data['TermTypeId']
         # get contract status from db
         result = TermTypeById.get(self, term_type_id)
         my_json = result.data.decode('utf8')
         decoded_data = json.loads(my_json)
+        # print(decoded_data)
         if decoded_data != 'No record available for this term type id':
             if decoded_data['termTypeId'] == term_type_id:
 
