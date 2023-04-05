@@ -13,7 +13,7 @@ from resources.contract_obligation import *
 from resources.term_types import *
 from resources.contract_compliance import *
 from resources.contract_signatures import *
-from tests.contract_test import *
+# from tests.contract_test import *
 from flask_restful import Api
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -267,5 +267,5 @@ if __name__ == '__main__':
     # scheduler.add_job(id='Contract compliance task', func=compliance, trigger='interval', minutes=1440)
     # if current_date >= date(2022, 4, 26):
     #     scheduler.start()
-    # app.run(debug=True)
-    app.run(debug=True, host='0.0.0.0',port=5004)
+    app.run(debug=True)
+    # app.run(debug=True, host='0.0.0.0',port=5004)

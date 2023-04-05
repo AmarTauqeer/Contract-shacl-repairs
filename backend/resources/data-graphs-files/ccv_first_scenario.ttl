@@ -35,12 +35,12 @@
             base:contractType base:Written;
             base:forPurpose "data sharing between Tim and Alice";
             base:hasContractCategory base:categoryBusinessToBusiness;
-            base:hasContractStatus base:statusExpired;
-            base:hasEndDate "2023-09-07T17:14:32"^^xsd:dateTime;
+            base:hasContractStatus base:statusPending;
+            base:hasEndDate "2021-09-07T17:14:32"^^xsd:dateTime;
             fibo-fnd-agr-ctr:hasEffectiveDate "2022-09-07T17:14:32"^^xsd:dateTime;
             fibo-fnd-agr-ctr:hasExecutionDate "2022-09-07T17:14:32"^^xsd:dateTime ;
-            base:hasStates base:stateInvalid;
-            base:currentDateTime "2023-02-27T11:12:17"^^xsd:dateTime;
+            base:hasStates base:statePending;
+            base:currentDateTime "2023-03-31T13:23:01"^^xsd:dateTime;
             base:hasConsentState "empty" .
 
             

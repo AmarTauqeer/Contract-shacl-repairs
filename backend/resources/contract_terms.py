@@ -124,7 +124,7 @@ class TermCreate(MethodResource, Resource):
 
         validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="term",
                                                                                        typeid=data['TermTypeId'],
-                                                                                       createDate=data['CreateDate'],
+                                                                                       createdate=data['CreateDate'],
                                                                                        desc=data['Description'])
 
         # print(validation_result['term_violoations'])
@@ -207,9 +207,10 @@ class TermUpdate(MethodResource, Resource):
                 validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self, case="term",
                                                                                                typeid=decoded_data[
                                                                                                    'TermTypeId'],
-                                                                                               createDate=decoded_data[
+                                                                                               createdate=decoded_data[
                                                                                                    'CreateDate'],
-                                                                                               desc=decoded_data['Description'])
+                                                                                               desc=decoded_data[
+                                                                                                   'Description'])
 
                 # print(validation_result['term_violoations'])
 

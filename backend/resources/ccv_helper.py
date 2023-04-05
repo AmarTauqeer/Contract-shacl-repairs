@@ -254,7 +254,7 @@ class CCVHelper(MethodResource, Resource):
             """.format(prefix(), contid, conttype, purpose, contcategory, contstatus, enddate,
                        effecdate, exedate, oblstate, currentdate, consstate)
 
-            # print(data_graph)
+            print(data_graph)
             ## create data graph file for validation
             main_directory = f"{rootpath.detect()}/resources/data-graphs-files"
             file_name = '/ccv_first_scenario.ttl'
@@ -338,8 +338,11 @@ class CCVHelper(MethodResource, Resource):
         url_get_consent_data = "http://138.232.18.138:5003/query/{0}/consent".format(consent_id)
         headers["Authorization"] = "Bearer " + token
 
+        print(f"request= {url_get_consent_data}")
+
         resp = requests.get(url_get_consent_data, headers=headers)
         result = resp.json()
+        # print(result)
         a = result["message"]
         a = eval(a)
         consent_data = a['consent_data']
