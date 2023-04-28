@@ -31,15 +31,15 @@
         @prefix ex: <http://example.com/ns#> .
 
 
-                            base:contb2c_f6172eaa-a2e6-11ed-b1bc-0b613fb8badf a base:CCVThirdIf;
+                            base:contb2c_bce91706-e373-11ed-b1bb-63e8dd7a1db5 a base:CCVThirdIf;
                             base:contractType base:Written;
-                            base:forPurpose "data sharing between processor and consumer";
+                            base:forPurpose "data sharing between data subject and data controller";
                             base:hasContractCategory base:categoryBusinessToConsumer;
                             base:hasContractStatus base:statusUpdated;
-                            base:hasEndDate "2024-07-07T10:38:07"^^xsd:dateTime;
-                            fibo-fnd-agr-ctr:hasEffectiveDate "2023-02-02T14:14:25"^^xsd:dateTime;
-                            fibo-fnd-agr-ctr:hasExecutionDate "2023-02-02T14:14:25"^^xsd:dateTime;
+                            base:hasEndDate "2024-04-25T14:36:30"^^xsd:dateTime;
+                            fibo-fnd-agr-ctr:hasEffectiveDate "2023-04-25T14:36:30"^^xsd:dateTime;
+                            fibo-fnd-agr-ctr:hasExecutionDate "2023-04-25T14:36:30"^^xsd:dateTime;
                             base:hasStates base:statePending;
                             base:hasConsentState "Invalid";
-                            base:currentDateTime "2023-03-31T13:23:01"^^xsd:dateTime .
+                            base:currentDateTime "2023-04-25T18:18:18"^^xsd:dateTime .
                             

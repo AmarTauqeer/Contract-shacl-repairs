@@ -133,7 +133,7 @@ class ValidationShaclInsertUpdate(MethodResource, Resource):
                             """.format(prefix(), contid, enddate, exedate, effecdate, purpose, contstatus, conttype,
                                        contcategory, consValue)
 
-            # print(f"data graph={data_graph}")
+            print(f"data graph={data_graph}")
 
             d = Graph().parse(data=data_graph, format="turtle")
             s = Graph().parse(data=shacl_file, format="turtle")

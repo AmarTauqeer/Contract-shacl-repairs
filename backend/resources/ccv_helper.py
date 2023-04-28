@@ -78,10 +78,11 @@ class CCVHelper(MethodResource, Resource):
                             fibo-fnd-agr-ctr:hasEffectiveDate "{7}"^^xsd:dateTime;
                             fibo-fnd-agr-ctr:hasExecutionDate "{8}"^^xsd:dateTime ;
                             base:hasStates base:{9};
-                            base:currentDateTime "{10}"^^xsd:dateTime .
+                            base:currentDateTime "{10}"^^xsd:dateTime;
+                            base:hasConsentState "{11}" .
                             """.format(prefix(), contid, conttype, purpose, contcategory, contstatus,
-                                       enddate, effecdate, exedate, oblstate, currentdate)
-            # print(data_graph)
+                                       enddate, effecdate, exedate, oblstate, currentdate, consstate)
+            print(f"ccv fourth scenario data_graph = {data_graph}")
             ## create data graph file for validation
             main_directory = f"{rootpath.detect()}/resources/data-graphs-files"
             file_name = '/ccv_fourth_scenario.ttl'
@@ -102,9 +103,10 @@ class CCVHelper(MethodResource, Resource):
             d = Graph().parse(data=data_graph, format="turtle")
             s = Graph().parse(data=shacl_file, format="turtle")
             conforms, report, message = validate(d, shacl_graph=s, advanced=True, debug=False)
-            print(message)
+            # print(message)
             violation_data = {
-                'ccv_fourth_scenario': message
+                'ccv_fourth_scenario': message,
+                'contract_id': contid,
             }
 
             return violation_data
@@ -148,7 +150,8 @@ class CCVHelper(MethodResource, Resource):
             s = Graph().parse(data=shacl_file, format="turtle")
             conforms, report, message = validate(d, shacl_graph=s, advanced=True, debug=False)
             violation_data = {
-                'ccv_third_else_part_scenario': message
+                'ccv_third_else_part_scenario': message,
+                'contract_id': contid,
             }
             return violation_data
         elif scenario == "ccv_third_if_part_scenario":
@@ -190,7 +193,8 @@ class CCVHelper(MethodResource, Resource):
             s = Graph().parse(data=shacl_file, format="turtle")
             conforms, report, message = validate(d, shacl_graph=s, advanced=True, debug=False)
             violation_data = {
-                'ccv_third_if_part_scenario': message
+                'ccv_third_if_part_scenario': message,
+                'contract_id': contid,
             }
             return violation_data
         elif scenario == "ccv_second_scenario":
@@ -233,7 +237,8 @@ class CCVHelper(MethodResource, Resource):
             s = Graph().parse(data=shacl_file, format="turtle")
             conforms, report, message = validate(d, shacl_graph=s, advanced=True, debug=False)
             violation_data = {
-                'ccv_second_scenario': message
+                'ccv_second_scenario': message,
+                'contract_id': contid,
             }
             return violation_data
         elif scenario == "ccv_first_scenario":
@@ -254,7 +259,7 @@ class CCVHelper(MethodResource, Resource):
             """.format(prefix(), contid, conttype, purpose, contcategory, contstatus, enddate,
                        effecdate, exedate, oblstate, currentdate, consstate)
 
-            print(data_graph)
+            # print(data_graph)
             ## create data graph file for validation
             main_directory = f"{rootpath.detect()}/resources/data-graphs-files"
             file_name = '/ccv_first_scenario.ttl'
@@ -276,7 +281,8 @@ class CCVHelper(MethodResource, Resource):
             s = Graph().parse(data=shacl_file, format="turtle")
             conforms, report, message = validate(d, shacl_graph=s, advanced=True, debug=False)
             violation_data = {
-                'ccv_first_scenario': message
+                'ccv_first_scenario': message,
+                'contract_id':contid,
             }
             return violation_data
         elif scenario == "ccv_fifth_scenario":
@@ -311,7 +317,8 @@ class CCVHelper(MethodResource, Resource):
             s = Graph().parse(data=shacl_file, format="turtle")
             conforms, report, message = validate(d, shacl_graph=s, advanced=True, debug=False)
             violation_data = {
-                'consent_expired_contract_still_running_violoations': message
+                'consent_expired_contract_still_running_violoations': message,
+                'contract_id': contid,
             }
             return violation_data
 
@@ -329,6 +336,7 @@ class CCVHelper(MethodResource, Resource):
             'username': os.getenv("username"),
             'password': os.getenv("pass"),
         }
+
 
         url_get_login = "http://138.232.18.138:5003/jwt/login/"
         resp1 = requests.post(url_get_login, headers=headers, json=data)

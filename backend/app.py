@@ -254,13 +254,13 @@ docs.register(GetContractCompliance)
 # current_date = date(2022, 4, 26)
 
 current_date = date.today()
-
-
-def compliance():
-    CONTRACT_URL = "https://actool.contract-shacl.sti2.at/contract/compliance/"
-    # CONTRACT_URL = "http://172.25.0.81:5000/contract/compliance/"
-    data = requests.get(CONTRACT_URL)
-    data = data.json()
+#
+#
+# def compliance():
+#     CONTRACT_URL = "https://actool.contract-shacl.sti2.at/contract/compliance/"
+#     # CONTRACT_URL = "http://172.25.0.81:5000/contract/compliance/"
+#     data = requests.get(CONTRACT_URL)
+#     data = data.json()
 
 
 if __name__ == '__main__':

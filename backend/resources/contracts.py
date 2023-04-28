@@ -307,33 +307,36 @@ class ContractUpdate(MethodResource, Resource):
                 status_value = decoded_data['contractStatus']
                 signed = re.findall(r"Signed", status_value)
                 if len(signed) == 0:
+                    # date conversion
+                    from resources.ccv_helper import CCVHelper
+                    iso_edate = CCVHelper.iso_date_conversion(self, decoded_data['endDate'][:19])
+                    iso_exdate = CCVHelper.iso_date_conversion(self, decoded_data['executionDate'][:19])
+                    iso_effdate = CCVHelper.iso_date_conversion(self, decoded_data['effectiveDate'][:19])
+
                     validation_result = ValidationShaclInsertUpdate.validation_shacl_insert_update(self,
                                                                                                    case="contract",
                                                                                                    contid=contract_id,
                                                                                                    conttype=
                                                                                                    decoded_data[
-                                                                                                       'ContractType'],
+                                                                                                       'contractType'],
                                                                                                    contcategory=
                                                                                                    decoded_data[
-                                                                                                       'ContractCategory'],
+                                                                                                       'contractCategory'],
                                                                                                    contstatus=
                                                                                                    decoded_data[
-                                                                                                       'ContractStatus'],
+                                                                                                       'contractStatus'],
                                                                                                    consValue=
                                                                                                    decoded_data[
-                                                                                                       'ConsiderationValue'],
+                                                                                                       'value'],
                                                                                                    effecdate=
-                                                                                                   decoded_data[
-                                                                                                       'EffectiveDate'],
-                                                                                                   exedate=decoded_data[
-                                                                                                       'ExecutionDate'],
-                                                                                                   enddate=decoded_data[
-                                                                                                       'EndDate'],
+                                                                                                   iso_effdate,
+                                                                                                   exedate=iso_exdate,
+                                                                                                   enddate=iso_edate,
                                                                                                    purpose=decoded_data[
-                                                                                                       'Purpose'],
+                                                                                                       'purpose'],
                                                                                                    )
 
-                    # print(validation_result['obligation_violoations'])
+                    print(validation_result['contract_violoations'])
 
                     if 'sh:Violation' in validation_result['contract_violoations']:
                         return validation_result['contract_violoations']
@@ -361,9 +364,12 @@ class ContractUpdate(MethodResource, Resource):
                     #
                     # if validation_result != "":
                     #     return validation_result
+                    print('hi')
                     validated_data = schema_serializer.load(data)
+                    print(validated_data)
                     cv = ContractValidation()
                     response = cv.post_data(validated_data, type="update", contract_id=None)
+                    print(response)
                     if (response):
                         return jsonify({'Success': "Record updated successfully"})
                     else:

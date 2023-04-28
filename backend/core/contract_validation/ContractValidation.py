@@ -59,6 +59,7 @@ class ContractValidation(QueryEngine):
         if ConsiderationValue == 'string':
             ConsiderationValue = ''
 
+        print(type)
         if type == "insert":
             ContractId = contract_id
             respone = self.post_sparql(self.get_username(), self.get_password(),
@@ -81,7 +82,9 @@ class ContractValidation(QueryEngine):
 
                                        )
         else:
+            print("update")
             ContractId = validated_data["ContractId"]
+            print(ContractId)
             if ContractId != "":
                 # delete from knowledge graph
                 response = self.post_sparql(self.get_username(), self.get_password(),

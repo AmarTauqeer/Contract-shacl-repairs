@@ -31,16 +31,16 @@
         @prefix ex: <http://example.com/ns#> .
 
 
-            base:contb2b_bfcff2dc-2ed3-11ed-be7d-3f8589292a29 a base:CCV1st;
+            base:contb2b_236740a2-e379-11ed-b1bb-63e8dd7a1db5 a base:CCV1st;
             base:contractType base:Written;
-            base:forPurpose "data sharing between Tim and Alice";
+            base:forPurpose "data sharing between data subject and data controller";
             base:hasContractCategory base:categoryBusinessToBusiness;
-            base:hasContractStatus base:statusPending;
-            base:hasEndDate "2021-09-07T17:14:32"^^xsd:dateTime;
-            fibo-fnd-agr-ctr:hasEffectiveDate "2022-09-07T17:14:32"^^xsd:dateTime;
-            fibo-fnd-agr-ctr:hasExecutionDate "2022-09-07T17:14:32"^^xsd:dateTime ;
+            base:hasContractStatus base:statusUpdated;
+            base:hasEndDate "2024-04-25T14:36:30"^^xsd:dateTime;
+            fibo-fnd-agr-ctr:hasEffectiveDate "2023-04-25T14:36:30"^^xsd:dateTime;
+            fibo-fnd-agr-ctr:hasExecutionDate "2023-04-25T14:36:30"^^xsd:dateTime ;
             base:hasStates base:statePending;
-            base:currentDateTime "2023-03-31T13:23:01"^^xsd:dateTime;
+            base:currentDateTime "2023-04-25T18:18:18"^^xsd:dateTime;
             base:hasConsentState "empty" .
 
             

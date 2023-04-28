@@ -77,6 +77,7 @@ class GetContractCompliance(MethodResource, Resource):
             if 'contb2b_' in contract_id:
                 b2b = contract_id
 
+
             # convert obligation end date time to date
             date_time_obj=CCVHelper.iso_date_conversion(self, obligation_edate)
 
@@ -87,6 +88,7 @@ class GetContractCompliance(MethodResource, Resource):
             # get consent id if contract is b2c
             if b2c_data != 'No data found for this ID':
                 consent = b2c_data['consentId']
+
 
             # get b2b contract
             b2b_data = ContractByContractId.get(self, b2b)
@@ -111,7 +113,7 @@ class GetContractCompliance(MethodResource, Resource):
                 iso_date_b2b_edate = CCVHelper.iso_date_conversion(self,b2b_data['endDate'][:19])
                 iso_date_b2b_exdate = CCVHelper.iso_date_conversion(self,b2b_data['executionDate'][:19])
                 iso_date_b2b_effdate = CCVHelper.iso_date_conversion(self,b2b_data['effectiveDate'][:19])
-                # print(iso_date_b2b_edate)
+                # print(f"edate={iso_date_b2b_edate}")
 
                 start=timer()
                 all_violation_messages.append(
@@ -144,6 +146,7 @@ class GetContractCompliance(MethodResource, Resource):
                 b2c_contract_id = b2c_data["contractId"]
                 b2c_contract_status = b2c_data["contractStatus"]
 
+            # print(f"b2c={b2c} b2b={b2b} consent={consent}")
             # handle business to consumer and business to business contract based on consent
             if b2c != "" and b2b != "" and consent != "empty":
                 print(f'b2c, b2b  with consent')
@@ -399,6 +402,7 @@ class GetContractCompliance(MethodResource, Resource):
         total_elapsed_time_ccv_third_else_part_scenario = 0.0
         total_elapsed_time_ccv_fourth_scenario = 0.0
         total_elapsed_time_ccv_fifth_scenario = 0.0
+
         for sc in total_elapsed_time:
             if sc['scenario']=='ccv_first_scenario':
                 total_elapsed_time_1st_scenario+=sc['elapsedTime']

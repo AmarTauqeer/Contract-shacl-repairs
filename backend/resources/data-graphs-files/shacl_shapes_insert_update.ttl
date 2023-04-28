@@ -127,7 +127,7 @@ schema:ContractorShape
 	];
 	sh:property[
 		sh:path base:hasRole;
-		sh:in (base:DataController base:DataProcessor base:DataOwner)
+		sh:in (base:DataController base:DataProcessor base:DataOwner base:DataSubject)
 	].
 schema:CompanyShape
 	a sh:NodeShape;

@@ -31,9 +31,9 @@
         @prefix ex: <http://example.com/ns#> .
 
 
-            base:contb2c_51e561c2-2ed2-11ed-be7d-3f8589292a29 a base:CCVFifth;
-            base:hasContractStatus base:statusUpdated;
+            base:contb2c_bce91706-e373-11ed-b1bb-63e8dd7a1db5 a base:CCVFifth;
+            base:hasContractStatus base:;
             base:hasConsentState "Invalid";
-            base:currentDateTime "2023-03-31T13:23:01"^^xsd:dateTime .
+            base:currentDateTime "2023-04-25T18:18:18"^^xsd:dateTime .
 
             
