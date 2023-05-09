@@ -34,6 +34,6 @@
             base:contb2c_bce91706-e373-11ed-b1bb-63e8dd7a1db5 a base:CCVFifth;
             base:hasContractStatus base:;
             base:hasConsentState "Invalid";
-            base:currentDateTime "2023-04-25T18:18:18"^^xsd:dateTime .
+            base:currentDateTime "2023-05-05T13:45:53"^^xsd:dateTime .
 
             

@@ -40,6 +40,6 @@
                             fibo-fnd-agr-ctr:hasEffectiveDate "2022-09-07T10:38:07"^^xsd:dateTime;
                             fibo-fnd-agr-ctr:hasExecutionDate "2022-09-07T10:38:07"^^xsd:dateTime ;
                             base:hasStates base:statePending;
-                            base:currentDateTime "2023-04-25T18:18:18"^^xsd:dateTime;
+                            base:currentDateTime "2023-05-05T13:45:53"^^xsd:dateTime;
                             base:hasConsentState "empty" .
                             
